@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    background-color: #000422;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Fondo degradado original */
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top, #00124d 0%, #000422 100%);
+    z-index: -1;
+}
+
+header {
+    padding: 40px 0 20px 0;
+    text-align: center;
+}
+
+.logo-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.txt-blue { color: #4a86e8; }
+.txt-red { color: #ff4b4b; }
+.txt-gold { color: #FFD700; }
+
+/* Navegación de Pestañas */
+.tabs-nav {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 30px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.tab-link {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 12px 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: 0.3s;
+    border-bottom: 3px solid transparent;
+    text-transform: uppercase;
+}
+
+.tab-link.active {
+    color: white;
+    border-bottom: 3px solid #ff4b4b; /* Línea roja activa */
+}
+
+.content-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 15px 50px 15px;
+}
+
+.card {
+    background: rgba(0, 10, 60, 0.4);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+h2 { margin-bottom: 20px; font-weight: 900; text-align: center; }
+
+/* --- DISEÑO DE TABLAS Y GRILLAS --- */
+.header-grid {
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 2px solid #FFD700;
+    font-weight: 900;
+    color: #FFD700;
+}
+
+/* Grilla para Posiciones */
+.grid-posiciones {
+    display: grid;
+    /* El nombre del equipo ocupa el espacio disponible (1fr) 
+       y los números ocupan solo 45px cada uno (el último 55px por los puntos) */
+    grid-template-columns: 1fr 45px 45px 45px 45px 45px 55px;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Alineamos los números al centro para que se vean ordenados */
+.grid-posiciones span:not(:first-child) {
+    text-align: center;
+}
+
+/* Grilla para Goleadores */
+.grid-goleadores {
+    display: grid;
+    grid-template-columns: 50px 150px 1fr 80px;
+    padding: 12px 20px;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.team-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+
+.mini-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* Estilo Top Scorer (Primer lugar) */
+.top-scorer-card {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(0, 20, 80, 0.6) 100%);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.top-scorer-name {
+    color: #FFD700 !important;
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+/* Diseño de Partidos */
+.match-item {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    font-weight: 700;
+}
+
+.score-box {
+    background: #FFD700;
+    color: black;
+    padding: 4px;
+    border-radius: 4px;
+    font-weight: 900;
+}
+
+/* Responsive Móvil */
+@media (max-width: 768px) {
+    .grid-posiciones {
+        grid-template-columns: 100px repeat(8, 35px);
+        overflow-x: auto;
+        font-size: 0.75rem;
+    }
+    .grid-goleadores {
+        grid-template-columns: 35px 80px 1fr 50px;
+        font-size: 0.8rem;
+    }
+}
+/* --- ESTILO PARA LAS FECHAS (DIVIDERS) --- */
+
+.date-divider {
+    background: #FFD700; /* Dorado NAMLEAGUE */
+    color: black;
+    padding: 6px 15px;
+    font-weight: 900;
+    font-size: 0.85rem;
+    display: inline-block;
+    text-transform: uppercase;
+    border-radius: 6px 6px 0 0; /* Redondea solo arriba */
+    margin-top: 25px;
+    letter-spacing: 1px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+}
+
+/* Ajuste para que la tarjeta se "pegue" al divider de la fecha */
+.date-divider + .card {
+    border-top-left-radius: 0 !important;
+    margin-top: 0;
+    border-top: 2px solid #FFD700;
+}
+
+/* Espaciado extra para los logos en las filas de partidos */
+.match-item .mini-logo {
+    width: 30px;
+    height: 30px;
+    margin: 0 10px;
+}
+
+/* --- ESTILOS DEL CUADRO (FASE FINAL) --- */
+
+.bracket-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.bracket-round {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    min-width: 200px;
+}
+
+.bracket-round h3 {
+    text-align: center;
+    color: #FFD700;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.match-bracket {
+    background: rgba(0, 10, 60, 0.6);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    margin: 10px 0;
+    padding: 10px;
+    position: relative;
+}
+
+.team-bracket {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.team-bracket.winner {
+    color: #FFD700;
+}
+
+.score-bracket {
+    background: #1a2a6c;
+    min-width: 25px;
+    text-align: center;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Líneas conectoras (Solo para pantallas grandes) */
+@media (min-width: 768px) {
+    .match-bracket::after {
+        content: "";
+        position: absolute;
+        right: -21px;
+        top: 50%;
+        width: 20px;
+        height: 2px;
+        background: rgba(255, 215, 0, 0.3);
+    }
+    .bracket-round:last-child .match-bracket::after {
+        display: none;
+    }
+}
