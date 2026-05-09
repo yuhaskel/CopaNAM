@@ -25,16 +25,13 @@ function formatearFechaEspanol(fechaStr) {
 
 async function cargarTorneo() {
     try {
-        const response = await fetch('torneo_data.json');
-        if (!response.ok) throw new Error("No se pudo encontrar el archivo JSON");
-        
+        // Pedimos la ruta al servidor, no al archivo físico
+        const response = await fetch('/torneo_data.json'); 
+        if (!response.ok) throw new Error("Error al obtener datos");
         torneoData = await response.json();
-        console.log("Datos cargados con éxito:", torneoData);
-        
         actualizarInterfaz();
     } catch (error) {
-        console.error("Error al cargar datos:", error);
-        alert("Error crítico: Revisa la consola (F12) para ver qué función está fallando.");
+        console.error("Fallo al cargar:", error);
     }
 }
 
