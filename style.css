@@ -278,3 +278,64 @@ h2 { margin-bottom: 20px; font-weight: 900; text-align: center; }
         display: none;
     }
 }
+/* --- DISEÑO PARA MÓVILES --- */
+@media (max-width: 768px) {
+    /* Ajustamos el contenedor principal */
+    body {
+        padding: 15px 10px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+    }
+
+    /* Botones de menú: uno sobre otro para que no se amontonen */
+    .menu-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    /* Tablas: permitimos que se deslicen de lado si son muy anchas */
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Scroll suave en iPhone */
+        margin-bottom: 30px;
+        border-radius: 8px;
+    }
+
+    table {
+        min-width: 500px; /* Evita que la tabla se comprima demasiado */
+        font-size: 0.85rem;
+    }
+
+    /* CUADRO FINAL (BRACKET) */
+    .bracket-container {
+        display: flex;
+        overflow-x: auto; /* Scroll horizontal obligatorio */
+        gap: 25px;
+        padding: 20px 10px;
+        -webkit-overflow-scrolling: touch;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+    }
+
+    /* Estilizamos la barrita de scroll para que se vea moderna */
+    .bracket-container::-webkit-scrollbar {
+        height: 5px;
+    }
+    .bracket-container::-webkit-scrollbar-thumb {
+        background: #fbbf24; /* Color dorado/amarillo para que resalte */
+        border-radius: 10px;
+    }
+}
