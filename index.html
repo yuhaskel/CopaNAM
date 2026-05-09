@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#NAMLEAGUE2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <header>
+        <h1 class="logo-title">#<span class="txt-blue">N</span><span class="txt-red">A</span>MLEAGUE2026</h1>
+    </header>
+
+    <nav class="tabs-nav">
+        <button class="tab-link active" onclick="openTab(event, 'posiciones')">📊 POSICIONES</button>
+        <button class="tab-link" onclick="openTab(event, 'proximos')">🗓️ PRÓXIMOS</button>
+        <button class="tab-link" onclick="openTab(event, 'resultados')">⚽ RESULTADOS</button>
+        <button class="tab-link" onclick="openTab(event, 'fase-final')">🏆 FASE FINAL</button>
+        <button class="tab-link" onclick="openTab(event, 'goleadores')">👟 GOLEADORES</button>
+        <button class="tab-link" onclick="openTab(event, 'admin')">🔐 ADMIN</button>
+    </nav>
+
+    <div class="content-container">
+        <section id="posiciones" class="tab-content" style="display: block;"></section>
+        <section id="proximos" class="tab-content"></section>
+        <section id="resultados" class="tab-content"></section>
+        <section id="fase-final" class="tab-content"></section>
+        <section id="goleadores" class="tab-content"></section>
+
+        <section id="admin" class="tab-content">
+            <div id="admin-login" class="card">
+                <h2>🔐 Acceso Administrador</h2>
+                <div class="admin-form" style="text-align: center; display: flex; justify-content: center; gap: 10px;">
+                    <input type="password" id="admin-password" placeholder="Clave de acceso">
+                    <button class="btn-add" onclick="verificarPassword()">Entrar</button>
+                </div>
+            </div>
+
+            <div id="admin-panel" style="display: none;">
+                <div class="card">
+                    <h2>📅 Gestión de Partidos</h2>
+                    <div class="admin-form">
+                        <h3>Agendar Nuevo Partido</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                            <input type="date" id="match-date">
+                            <select id="match-team-l"></select>
+                            <span class="txt-gold">VS</span>
+                            <select id="match-team-v"></select>
+                            <button class="btn-add" onclick="agendarPartido()">🗓️ Agendar</button>
+                        </div>
+                    </div>
+                    <hr style="margin: 20px 0; opacity: 0.1;">
+                    <h3>Partidos Registrados (Editar Goles)</h3>
+                    <div id="admin-partidos-list"></div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h2>👟 Gestión de Goleadores</h2>
+                    <div class="admin-form">
+                        <h3>Añadir Nuevo Jugador</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                            <input type="text" id="new-player-name" placeholder="NOMBRE DEL JUGADOR">
+                            <select id="new-player-team"></select>
+                            <input type="number" id="new-player-goals" value="0" style="width: 70px;">
+                            <button class="btn-add" onclick="agregarJugador()">➕ Añadir</button>
+                        </div>
+                    </div>
+                    <hr style="margin: 20px 0; opacity: 0.1;">
+                    <h3>Modificar Goles existentes</h3>
+                    <div id="admin-goleadores-list"></div>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h2>🏆 Gestión de Fase Final</h2>
+                    <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 10px;">Edita los cruces y resultados de las eliminatorias.</p>
+                    <div id="admin-fase-final-list">
+                        </div>
+                </div>
+
+                <button class="btn-save" onclick="guardarCambiosServidor()">💾 GUARDAR TODO EN DISCO (JSON)</button>
+                <button class="btn-save" style="background: #444; margin-top: 10px;" onclick="cerrarSesion()">Cerrar Sesión</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
