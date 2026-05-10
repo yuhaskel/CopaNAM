@@ -39,6 +39,33 @@
             </div>
 
             <div id="admin-panel" style="display: none;">
+                
+                <div class="card" style="margin-bottom: 20px;">
+                    <h2>🛡️ Gestión de Equipos</h2>
+                    <div class="admin-form">
+                        <h3>Incorporar Nuevo Equipo</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                            <input type="text" id="new-team-name" placeholder="NOMBRE DEL EQUIPO">
+                            <select id="new-team-group">
+                                <option value="A">Grupo A</option>
+                                <option value="B">Grupo B</option>
+                                <option value="C">Grupo C</option>
+                                <option value="D">Grupo D</option>
+                            </select>
+                            <div class="file-input-wrapper">
+                                <label for="new-team-logo" class="btn-file">📁 Subir Logo</label>
+                                <input type="file" id="new-team-logo" accept="image/*" style="display:none;" onchange="updateFileName(this)">
+                                <span id="file-name-display" style="font-size: 0.7rem; opacity: 0.7;">Sin archivo</span>
+                            </div>
+                            <button class="btn-add" onclick="agregarEquipo()">➕ Crear Equipo</button>
+                        </div>
+                    </div>
+                    <hr style="margin: 20px 0; opacity: 0.1;">
+                    <h3>Equipos Registrados (Editar Nombre/Grupo/Logo)</h3>
+                    <div id="admin-teams-list">
+                        </div>
+                </div>
+
                 <div class="card">
                     <h2>📅 Gestión de Partidos</h2>
                     <div class="admin-form">
@@ -71,11 +98,11 @@
                     <h3>Modificar Goles existentes</h3>
                     <div id="admin-goleadores-list"></div>
                 </div>
+
                 <div class="card" style="margin-top: 20px;">
                     <h2>🏆 Gestión de Fase Final</h2>
                     <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 10px;">Edita los cruces y resultados de las eliminatorias.</p>
-                    <div id="admin-fase-final-list">
-                        </div>
+                    <div id="admin-fase-final-list"></div>
                 </div>
 
                 <button class="btn-save" onclick="guardarCambiosServidor()">💾 GUARDAR TODO EN DISCO (JSON)</button>
@@ -85,5 +112,12 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Función auxiliar para mostrar el nombre del archivo seleccionado
+        function updateFileName(input) {
+            const display = document.getElementById('file-name-display');
+            display.innerText = input.files.length > 0 ? input.files[0].name : "Sin archivo";
+        }
+    </script>
 </body>
 </html>
