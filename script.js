@@ -111,10 +111,12 @@ function renderizarPosiciones() {
     const grupos = [...new Set(Object.values(stats).map(s => s.grupo))].sort();
 
     grupos.forEach(g => {
-        html += `<div class="card" style="margin-bottom:15px;">
-                    <div class="header-grid grid-posiciones">
-                        <span>GRUPO ${g}</span><span>PJ</span><span>G</span><span>E</span><span>P</span><span>DG</span><span>PTS</span>
-                    </div>`;
+        // Envolvemos cada tabla en un div 'table-container' para el scroll móvil
+        html += `<div class="table-container">
+                    <div class="card" style="margin-bottom:15px; min-width: 450px;">
+                        <div class="header-grid grid-posiciones">
+                            <span>GRUPO ${g}</span><span>PJ</span><span>G</span><span>E</span><span>P</span><span>DG</span><span>PTS</span>
+                        </div>`;
         const ranking = Object.values(stats).filter(s => s.grupo === g).sort((a,b) => b.PTS - a.PTS || b.DG - a.DG);
         ranking.forEach(eq => {
             html += `<div class="grid-posiciones">
@@ -122,7 +124,7 @@ function renderizarPosiciones() {
                         <span>${eq.PJ}</span><span>${eq.G}</span><span>${eq.E}</span><span>${eq.P}</span><span>${eq.DG}</span><span class="txt-gold">${eq.PTS}</span>
                     </div>`;
         });
-        html += `</div>`;
+        html += `</div></div>`;
     });
     container.innerHTML = html;
 }
@@ -216,14 +218,18 @@ function renderizarFaseFinal() {
             const eqL = Object.values(torneoData.equipos).find(e => e.nombre === p.local);
             const eqV = Object.values(torneoData.equipos).find(e => e.nombre === p.visitante);
 
+            // LOGICA MEJORADA: Solo mostrar el tag de imagen si el equipo no es TBD y tiene logo
+            const logoL = (eqL && p.local && p.local !== 'TBD') ? `<img src="${obtenerSrcLogo(eqL.logo)}" class="mini-logo"> ` : '';
+            const logoV = (eqV && p.visitante && p.visitante !== 'TBD') ? `<img src="${obtenerSrcLogo(eqV.logo)}" class="mini-logo"> ` : '';
+
             html += `
                 <div class="match-bracket">
                     <div class="team-bracket ${winL ? 'winner' : ''}">
-                        <span><img src="${obtenerSrcLogo(eqL?.logo)}" class="mini-logo"> ${p.local || 'TBD'}</span>
+                        <span>${logoL}${p.local || 'TBD'}</span>
                         <span class="score-bracket">${p.goles_l ?? '-'}</span>
                     </div>
                     <div class="team-bracket ${winV ? 'winner' : ''}">
-                        <span><img src="${obtenerSrcLogo(eqV?.logo)}" class="mini-logo"> ${p.visitante || 'TBD'}</span>
+                        <span>${logoV}${p.visitante || 'TBD'}</span>
                         <span class="score-bracket">${p.goles_v ?? '-'}</span>
                     </div>
                 </div>`;
@@ -261,8 +267,6 @@ function llenarSelectsEquipos() {
         if (el) el.innerHTML = nombres.map(n => `<option value="${n}">${n}</option>`).join("");
     });
 }
-
-// --- GESTIÓN DE EQUIPOS (NUEVO & ROBUSTO) ---
 
 async function subirLogoAlServidor(file) {
     if (!file) return null;
@@ -358,8 +362,6 @@ function eliminarEquipo(id) {
         actualizarInterfaz();
     }
 }
-
-// --- PARTIDOS, GOLEADORES Y FASE FINAL ---
 
 function renderizarAdminPartidos() {
     const list = document.getElementById("admin-partidos-list");
