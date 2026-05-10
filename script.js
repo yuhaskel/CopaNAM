@@ -178,22 +178,34 @@ function generarFilaPartido(p) {
 function renderizarGoleadores() {
     const container = document.getElementById("goleadores");
     if (!container) return;
-    let html = `<h2>👟 Tabla de Goleadores</h2><div class="card">
+
+    // Abrimos el contenedor y la tarjeta
+    let html = `<h2>👟 Tabla de Goleadores</h2>
+                <div class="table-container">
+                <div class="card" style="min-width: 480px;">
                 <div class="header-grid grid-goleadores"><span></span><span>EQUIPO</span><span>JUGADOR</span><span style="text-align:center;">GOLES</span></div>`;
     
+    // Ordenamos la lista de mayor a menor goleador
     const lista = [...torneoData.goleadores].sort((a,b) => b.goles - a.goles);
+
     lista.forEach((g, i) => {
         const eq = Object.values(torneoData.equipos).find(e => e.nombre === g.equipo);
-        const esTop = i === 0 ? "top-scorer-card" : "";
         
-        html += `<div class="grid-goleadores ${esTop}">
+        // --- LÓGICA DE DESTACADO ---
+        // Si el índice 'i' es 0 (el primero de la lista), aplicamos las clases de oro
+        const esTopCard = i === 0 ? "top-scorer-card" : "";
+        const esTopName = i === 0 ? "top-scorer-name" : "";
+        
+        html += `<div class="grid-goleadores ${esTopCard}">
                     <img src="${obtenerSrcLogo(eq?.logo)}" class="mini-logo">
                     <span class="team-name-wrap">${g.equipo}</span>
-                    <span class="${i===0?'top-scorer-name':''}">${g.nombre}</span>
+                    <span class="${esTopName}">${g.nombre}</span>
                     <span class="txt-gold" style="text-align:center;font-weight:900;">${g.goles}</span>
                 </div>`;
     });
-    container.innerHTML = html + `</div>`;
+    
+    // Cerramos los divs y lo inyectamos al HTML
+    container.innerHTML = html + `</div></div>`;
 }
 
 function renderizarFaseFinal() {
