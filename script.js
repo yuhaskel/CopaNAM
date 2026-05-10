@@ -45,10 +45,19 @@ function actualizarInterfaz() {
     
     // Vistas de Administración
     llenarSelectsEquipos();
-    renderizarAdminEquipos(); // <--- NUEVA: Gestión de equipos
+    renderizarAdminEquipos(); 
     renderizarAdminGoleadores();
     renderizarAdminPartidos();
     renderizarAdminFaseFinal();
+}
+
+// Función auxiliar para gestionar logos (soporta Base64 y rutas de archivo)
+function obtenerSrcLogo(logo) {
+    if (!logo) return "";
+    if (logo.startsWith('http') || logo.startsWith('/')) {
+        return logo;
+    }
+    return `data:image/png;base64,${logo}`;
 }
 
 // ==========================================
@@ -67,7 +76,7 @@ function openTab(evt, tabName) {
 }
 
 // ==========================================
-// 3. RENDERIZADO PÚBLICO (Tablas, Resultados, etc.)
+// 3. RENDERIZADO PÚBLICO
 // ==========================================
 
 function renderizarPosiciones() {
@@ -108,11 +117,8 @@ function renderizarPosiciones() {
                     </div>`;
         const ranking = Object.values(stats).filter(s => s.grupo === g).sort((a,b) => b.PTS - a.PTS || b.DG - a.DG);
         ranking.forEach(eq => {
-            // El logo ahora puede ser una URL de archivo o Base64
-            const logoSrc = eq.logo ? (eq.logo.startsWith('http') || eq.logo.startsWith('/') ? eq.logo : `data:image/png;base64,${eq.logo}`) : '';
-            
             html += `<div class="grid-posiciones">
-                        <div class="team-cell"><img src="${logoSrc}" class="mini-logo">${eq.nombre}</div>
+                        <div class="team-cell"><img src="${obtenerSrcLogo(eq.logo)}" class="mini-logo">${eq.nombre}</div>
                         <span>${eq.PJ}</span><span>${eq.G}</span><span>${eq.E}</span><span>${eq.P}</span><span>${eq.DG}</span><span class="txt-gold">${eq.PTS}</span>
                     </div>`;
         });
@@ -159,13 +165,11 @@ function generarFilaPartido(p) {
     const eqL = Object.values(torneoData.equipos).find(e => e.nombre === p.local);
     const eqV = Object.values(torneoData.equipos).find(e => e.nombre === p.visitante);
     
-    const getLogo = (eq) => eq?.logo ? (eq.logo.startsWith('http') || eq.logo.startsWith('/') ? eq.logo : `data:image/png;base64,${eq.logo}`) : '';
-
     return `
         <div class="match-item">
-            <div class="team-cell" style="justify-content:flex-end;">${p.local} <img src="${getLogo(eqL)}" class="mini-logo"></div>
+            <div class="team-cell" style="justify-content:flex-end;">${p.local} <img src="${obtenerSrcLogo(eqL?.logo)}" class="mini-logo"></div>
             <div class="score-box">${p.goles_l !== null ? p.goles_l + " - " + p.goles_v : "VS"}</div>
-            <div class="team-cell"><img src="${getLogo(eqV)}" class="mini-logo"> ${p.visitante}</div>
+            <div class="team-cell"><img src="${obtenerSrcLogo(eqV?.logo)}" class="mini-logo"> ${p.visitante}</div>
         </div>`;
 }
 
@@ -178,11 +182,10 @@ function renderizarGoleadores() {
     const lista = [...torneoData.goleadores].sort((a,b) => b.goles - a.goles);
     lista.forEach((g, i) => {
         const eq = Object.values(torneoData.equipos).find(e => e.nombre === g.equipo);
-        const logo = eq?.logo ? (eq.logo.startsWith('http') || eq.logo.startsWith('/') ? eq.logo : `data:image/png;base64,${eq.logo}`) : '';
         const esTop = i === 0 ? "top-scorer-card" : "";
         
         html += `<div class="grid-goleadores ${esTop}">
-                    <img src="${logo}" class="mini-logo">
+                    <img src="${obtenerSrcLogo(eq?.logo)}" class="mini-logo">
                     <span class="team-name-wrap">${g.equipo}</span>
                     <span class="${i===0?'top-scorer-name':''}">${g.nombre}</span>
                     <span class="txt-gold" style="text-align:center;font-weight:900;">${g.goles}</span>
@@ -212,21 +215,15 @@ function renderizarFaseFinal() {
 
             const eqL = Object.values(torneoData.equipos).find(e => e.nombre === p.local);
             const eqV = Object.values(torneoData.equipos).find(e => e.nombre === p.visitante);
-            
-            const getLogoTag = (eq) => {
-                if (!eq?.logo) return '';
-                const src = (eq.logo.startsWith('http') || eq.logo.startsWith('/')) ? eq.logo : `data:image/png;base64,${eq.logo}`;
-                return `<img src="${src}" class="mini-logo">`;
-            };
 
             html += `
                 <div class="match-bracket">
                     <div class="team-bracket ${winL ? 'winner' : ''}">
-                        <span>${getLogoTag(eqL)} ${p.local || 'TBD'}</span>
+                        <span><img src="${obtenerSrcLogo(eqL?.logo)}" class="mini-logo"> ${p.local || 'TBD'}</span>
                         <span class="score-bracket">${p.goles_l ?? '-'}</span>
                     </div>
                     <div class="team-bracket ${winV ? 'winner' : ''}">
-                        <span>${getLogoTag(eqV)} ${p.visitante || 'TBD'}</span>
+                        <span><img src="${obtenerSrcLogo(eqV?.logo)}" class="mini-logo"> ${p.visitante || 'TBD'}</span>
                         <span class="score-bracket">${p.goles_v ?? '-'}</span>
                     </div>
                 </div>`;
@@ -265,18 +262,14 @@ function llenarSelectsEquipos() {
     });
 }
 
-// --- GESTIÓN DE EQUIPOS (NUEVO) ---
+// --- GESTIÓN DE EQUIPOS (NUEVO & ROBUSTO) ---
 
 async function subirLogoAlServidor(file) {
     if (!file) return null;
     const formData = new FormData();
     formData.append('file', file);
-    
     try {
-        const response = await fetch('/upload_logo', {
-            method: 'POST',
-            body: formData
-        });
+        const response = await fetch('/upload_logo', { method: 'POST', body: formData });
         if (!response.ok) throw new Error("Error al subir imagen");
         const data = await response.json();
         return data.logo_url;
@@ -304,26 +297,27 @@ async function agregarEquipo() {
     };
 
     alert("Equipo creado localmente. ¡Recuerda Guardar Todo!");
-    document.getElementById("new-team-name").value = "";
-    document.getElementById("new-team-logo").value = "";
-    document.getElementById("file-name-display").innerText = "Sin archivo";
     actualizarInterfaz();
 }
 
 function renderizarAdminEquipos() {
     const list = document.getElementById("admin-teams-list");
-    if (!list) return;
+    if (!list || !torneoData || !torneoData.equipos) return;
 
-    list.innerHTML = Object.keys(torneoData.equipos).map(id => {
+    const ids = Object.keys(torneoData.equipos);
+    if (ids.length === 0) {
+        list.innerHTML = "<p style='text-align:center; opacity:0.5; padding:20px;'>No hay equipos registrados aún.</p>";
+        return;
+    }
+
+    list.innerHTML = ids.map(id => {
         const eq = torneoData.equipos[id];
-        const logoSrc = eq.logo ? (eq.logo.startsWith('http') || eq.logo.startsWith('/') ? eq.logo : `data:image/png;base64,${eq.logo}`) : '';
-        
         return `
         <div class="admin-item" style="display:grid; grid-template-columns: 50px 1fr auto; gap:10px; align-items:center; background:rgba(255,255,255,0.05); padding:10px; margin-bottom:10px; border-radius:8px;">
-            <img src="${logoSrc}" style="width:40px; height:40px; border-radius:5px; object-fit:contain;">
+            <img src="${obtenerSrcLogo(eq.logo)}" style="width:40px; height:40px; border-radius:5px; object-fit:contain; background:#000;" onerror="this.src='https://via.placeholder.com/40?text=?'">
             <div>
-                <input type="text" value="${eq.nombre}" onchange="editarNombreEquipo('${id}', this.value)" style="width:100%; margin-bottom:5px;">
-                <select onchange="editarGrupoEquipo('${id}', this.value)" style="width:100px; font-size:0.7rem;">
+                <input type="text" value="${eq.nombre}" onchange="editarNombreEquipo('${id}', this.value)" style="width:100%; margin-bottom:5px; background:rgba(0,0,0,0.3); color:white; border:1px solid #333; padding:5px; border-radius:4px;">
+                <select onchange="editarGrupoEquipo('${id}', this.value)" style="width:100%; font-size:0.7rem; background:rgba(0,0,0,0.3); color:white; border:1px solid #333; border-radius:4px;">
                     <option value="A" ${eq.grupo==='A'?'selected':''}>Grupo A</option>
                     <option value="B" ${eq.grupo==='B'?'selected':''}>Grupo B</option>
                     <option value="C" ${eq.grupo==='C'?'selected':''}>Grupo C</option>
@@ -331,7 +325,7 @@ function renderizarAdminEquipos() {
                     <option value="SIN GRUPO" ${eq.grupo==='SIN GRUPO'?'selected':''}>Sin Grupo</option>
                 </select>
             </div>
-            <div style="text-align:right;">
+            <div style="text-align:right; display:flex; flex-direction:column; gap:5px;">
                 <input type="file" id="update-logo-${id}" accept="image/*" style="display:none;" onchange="actualizarLogoEquipo('${id}', this.files[0])">
                 <button class="btn-small" onclick="document.getElementById('update-logo-${id}').click()">🖼️ Logo</button>
                 <button class="btn-small" style="background:#cc0000;" onclick="eliminarEquipo('${id}')">🗑️</button>
@@ -359,13 +353,13 @@ async function actualizarLogoEquipo(id, file) {
 }
 
 function eliminarEquipo(id) {
-    if (confirm(`¿Eliminar al equipo ${torneoData.equipos[id].nombre}? Se borrará de tablas y partidos.`)) {
+    if (confirm(`¿Eliminar al equipo ${torneoData.equipos[id].nombre}?`)) {
         delete torneoData.equipos[id];
         actualizarInterfaz();
     }
 }
 
-// --- RESTO DE GESTIÓN (PARTIDOS, GOLEADORES, FASE FINAL) ---
+// --- PARTIDOS, GOLEADORES Y FASE FINAL ---
 
 function renderizarAdminPartidos() {
     const list = document.getElementById("admin-partidos-list");
@@ -374,8 +368,8 @@ function renderizarAdminPartidos() {
         <div class="admin-item" style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:5px;">
             <div style="font-size:0.8rem;">${p.fecha}<br><strong>${p.local} vs ${p.visitante}</strong></div>
             <div>
-                <input type="number" id="gl-${i}" value="${p.goles_l !== null ? p.goles_l : ''}" style="width:40px; background:#000; color:white; border:1px solid #7db1ff;">
-                <input type="number" id="gv-${i}" value="${p.goles_v !== null ? p.goles_v : ''}" style="width:40px; background:#000; color:white; border:1px solid #7db1ff;">
+                <input type="number" id="gl-${i}" value="${p.goles_l !== null ? p.goles_l : ''}" style="width:40px;">
+                <input type="number" id="gv-${i}" value="${p.goles_v !== null ? p.goles_v : ''}" style="width:40px;">
                 <button class="btn-add" style="background:#28a745; padding:5px;" onclick="guardarResultado(${i})">✔️</button>
                 <button class="btn-small" onclick="eliminarPartido(${i})">🗑️</button>
             </div>
@@ -401,7 +395,7 @@ function guardarResultado(i) {
 }
 
 function eliminarPartido(i) {
-    if (confirm("¿Eliminar este partido?")) { torneoData.partidos.splice(i, 1); actualizarInterfaz(); }
+    if (confirm("¿Eliminar partido?")) { torneoData.partidos.splice(i, 1); actualizarInterfaz(); }
 }
 
 function renderizarAdminGoleadores() {
@@ -409,12 +403,12 @@ function renderizarAdminGoleadores() {
     if (!list) return;
     list.innerHTML = torneoData.goleadores.map((g, i) => `
         <div class="admin-item" style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:5px;">
-            <span>${g.nombre} <small style="color:#7db1ff;">(${g.equipo})</small></span>
+            <span>${g.nombre} <small>(${g.equipo})</small></span>
             <div>
                 <button class="btn-small" onclick="cambiarGoles(${i}, -1)">-</button>
                 <span style="margin:0 10px; font-weight:900;">${g.goles}</span>
                 <button class="btn-small" onclick="cambiarGoles(${i}, 1)">+</button>
-                <button class="btn-small" style="margin-left:10px; background:#666;" onclick="eliminarGoleador(${i})">🗑️</button>
+                <button class="btn-small" style="margin-left:10px;" onclick="eliminarGoleador(${i})">🗑️</button>
             </div>
         </div>`).join("");
 }
@@ -430,7 +424,6 @@ function agregarJugador() {
     const g = parseInt(document.getElementById("new-player-goals").value) || 0;
     if (n) {
         torneoData.goleadores.push({ nombre: n, equipo: e, goles: g });
-        document.getElementById("new-player-name").value = "";
         actualizarInterfaz();
     }
 }
@@ -444,37 +437,26 @@ function renderizarAdminFaseFinal() {
     if (!container || !torneoData.fase_final) return;
 
     const nombresEquipos = Object.values(torneoData.equipos).map(e => e.nombre).sort();
-    const opcionesEquipos = `<option value="">TBD (Por definir)</option>` + 
-                            nombresEquipos.map(n => `<option value="${n}">${n}</option>`).join("");
+    const opcionesEquipos = `<option value="">TBD</option>` + nombresEquipos.map(n => `<option value="${n}">${n}</option>`).join("");
 
     let html = "";
-    const rondas = Object.keys(torneoData.fase_final);
-
-    rondas.forEach(rondaKey => {
+    Object.keys(torneoData.fase_final).forEach(rondaKey => {
         let partidos = torneoData.fase_final[rondaKey];
         if (!Array.isArray(partidos)) partidos = [partidos]; 
-
-        html += `<div style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,215,0,0.1); padding-bottom: 10px;">
-                    <h4 style="color: #FFD700; text-transform: uppercase; margin-bottom: 10px; font-size:0.8rem;">${rondaKey.replace("_", " ")}</h4>`;
-
+        html += `<h4 style="color:#FFD700; font-size:0.7rem; margin-top:10px;">${rondaKey.replace("_", " ")}</h4>`;
         partidos.forEach((p, i) => {
-            if (!p) return;
             const selL = opcionesEquipos.replace(`value="${p.local}"`, `value="${p.local}" selected`);
             const selV = opcionesEquipos.replace(`value="${p.visitante}"`, `value="${p.visitante}" selected`);
-
             html += `
-                <div class="admin-item" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 5px; margin-bottom: 5px;">
-                    <select id="ff-l-${rondaKey}-${i}" style="flex: 1; min-width: 90px; font-size:0.8rem;">${selL}</select>
-                    <input type="number" id="ff-gl-${rondaKey}-${i}" value="${p.goles_l ?? ''}" style="width: 40px; font-size:0.8rem;" placeholder="0">
-                    <span class="txt-gold" style="font-size:0.7rem;">VS</span>
-                    <input type="number" id="ff-gv-${rondaKey}-${i}" value="${p.goles_v ?? ''}" style="width: 40px; font-size:0.8rem;" placeholder="0">
-                    <select id="ff-v-${rondaKey}-${i}" style="flex: 1; min-width: 90px; font-size:0.8rem;">${selV}</select>
-                    <button class="btn-add" style="background: #28a745; padding: 5px 8px;" onclick="guardarResultadoFaseFinal('${rondaKey}', ${i})">✔️</button>
+                <div class="admin-item" style="display:flex; gap:5px; align-items:center; margin-bottom:5px;">
+                    <select id="ff-l-${rondaKey}-${i}" style="flex:1;">${selL}</select>
+                    <input type="number" id="ff-gl-${rondaKey}-${i}" value="${p.goles_l ?? ''}" style="width:35px;">
+                    <input type="number" id="ff-gv-${rondaKey}-${i}" value="${p.goles_v ?? ''}" style="width:35px;">
+                    <select id="ff-v-${rondaKey}-${i}" style="flex:1;">${selV}</select>
+                    <button class="btn-add" onclick="guardarResultadoFaseFinal('${rondaKey}', ${i})">✔️</button>
                 </div>`;
         });
-        html += `</div>`;
     });
-
     container.innerHTML = html;
 }
 
@@ -484,18 +466,11 @@ function guardarResultadoFaseFinal(ronda, index) {
     const gl = document.getElementById(`ff-gl-${ronda}-${index}`).value;
     const gv = document.getElementById(`ff-gv-${ronda}-${index}`).value;
 
-    let target;
-    if (Array.isArray(torneoData.fase_final[ronda])) {
-        target = torneoData.fase_final[ronda][index];
-    } else {
-        target = torneoData.fase_final[ronda];
-    }
-
+    let target = Array.isArray(torneoData.fase_final[ronda]) ? torneoData.fase_final[ronda][index] : torneoData.fase_final[ronda];
     target.local = local || null;
     target.visitante = visitante || null;
     target.goles_l = gl === "" ? null : parseInt(gl);
     target.goles_v = gv === "" ? null : parseInt(gv);
-
     actualizarInterfaz();
 }
 
@@ -504,17 +479,14 @@ function guardarResultadoFaseFinal(ronda, index) {
 // ==========================================
 async function guardarCambiosServidor() {
     try {
-        const response = await fetch('/guardar', { // URL RELATIVA
+        const response = await fetch('/guardar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(torneoData)
         });
-        if (response.ok) {
-            alert("✅ ¡Éxito! Los cambios y logos se guardaron permanentemente.");
-        } else {
-            alert("❌ Error: El servidor rechazó la petición.");
-        }
+        if (response.ok) alert("✅ ¡Guardado con éxito!");
+        else alert("❌ Error al guardar.");
     } catch (e) {
-        alert("❌ Error: No se pudo conectar con el servidor.");
+        alert("❌ Error de conexión.");
     }
 }
