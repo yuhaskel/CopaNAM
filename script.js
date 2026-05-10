@@ -25,7 +25,6 @@ function formatearFechaEspanol(fechaStr) {
 
 async function cargarTorneo() {
     try {
-        // Pedimos la ruta al servidor, no al archivo físico
         const response = await fetch('/torneo_data.json'); 
         if (!response.ok) throw new Error("Error al obtener datos");
         torneoData = await response.json();
@@ -46,9 +45,10 @@ function actualizarInterfaz() {
     
     // Vistas de Administración
     llenarSelectsEquipos();
+    renderizarAdminEquipos(); // <--- NUEVA: Gestión de equipos
     renderizarAdminGoleadores();
     renderizarAdminPartidos();
-    renderizarAdminFaseFinal(); // <--- Llamamos a la nueva función de selects
+    renderizarAdminFaseFinal();
 }
 
 // ==========================================
@@ -67,7 +67,7 @@ function openTab(evt, tabName) {
 }
 
 // ==========================================
-// 3. RENDERIZADO PÚBLICO
+// 3. RENDERIZADO PÚBLICO (Tablas, Resultados, etc.)
 // ==========================================
 
 function renderizarPosiciones() {
@@ -108,7 +108,9 @@ function renderizarPosiciones() {
                     </div>`;
         const ranking = Object.values(stats).filter(s => s.grupo === g).sort((a,b) => b.PTS - a.PTS || b.DG - a.DG);
         ranking.forEach(eq => {
-            const logoSrc = eq.logo ? `data:image/png;base64,${eq.logo}` : '';
+            // El logo ahora puede ser una URL de archivo o Base64
+            const logoSrc = eq.logo ? (eq.logo.startsWith('http') || eq.logo.startsWith('/') ? eq.logo : `data:image/png;base64,${eq.logo}`) : '';
+            
             html += `<div class="grid-posiciones">
                         <div class="team-cell"><img src="${logoSrc}" class="mini-logo">${eq.nombre}</div>
                         <span>${eq.PJ}</span><span>${eq.G}</span><span>${eq.E}</span><span>${eq.P}</span><span>${eq.DG}</span><span class="txt-gold">${eq.PTS}</span>
@@ -156,14 +158,14 @@ function renderizarResultadosYProximos() {
 function generarFilaPartido(p) {
     const eqL = Object.values(torneoData.equipos).find(e => e.nombre === p.local);
     const eqV = Object.values(torneoData.equipos).find(e => e.nombre === p.visitante);
-    const logoL = eqL?.logo ? `data:image/png;base64,${eqL.logo}` : '';
-    const logoV = eqV?.logo ? `data:image/png;base64,${eqV.logo}` : '';
     
+    const getLogo = (eq) => eq?.logo ? (eq.logo.startsWith('http') || eq.logo.startsWith('/') ? eq.logo : `data:image/png;base64,${eq.logo}`) : '';
+
     return `
         <div class="match-item">
-            <div class="team-cell" style="justify-content:flex-end;">${p.local} <img src="${logoL}" class="mini-logo"></div>
+            <div class="team-cell" style="justify-content:flex-end;">${p.local} <img src="${getLogo(eqL)}" class="mini-logo"></div>
             <div class="score-box">${p.goles_l !== null ? p.goles_l + " - " + p.goles_v : "VS"}</div>
-            <div class="team-cell"><img src="${logoV}" class="mini-logo"> ${p.visitante}</div>
+            <div class="team-cell"><img src="${getLogo(eqV)}" class="mini-logo"> ${p.visitante}</div>
         </div>`;
 }
 
@@ -176,7 +178,7 @@ function renderizarGoleadores() {
     const lista = [...torneoData.goleadores].sort((a,b) => b.goles - a.goles);
     lista.forEach((g, i) => {
         const eq = Object.values(torneoData.equipos).find(e => e.nombre === g.equipo);
-        const logo = eq?.logo ? `data:image/png;base64,${eq.logo}` : '';
+        const logo = eq?.logo ? (eq.logo.startsWith('http') || eq.logo.startsWith('/') ? eq.logo : `data:image/png;base64,${eq.logo}`) : '';
         const esTop = i === 0 ? "top-scorer-card" : "";
         
         html += `<div class="grid-goleadores ${esTop}">
@@ -208,20 +210,23 @@ function renderizarFaseFinal() {
             const winL = p.goles_l !== null && p.goles_l > p.goles_v;
             const winV = p.goles_v !== null && p.goles_v > p.goles_l;
 
-            // Buscamos logos para la vista pública también
             const eqL = Object.values(torneoData.equipos).find(e => e.nombre === p.local);
             const eqV = Object.values(torneoData.equipos).find(e => e.nombre === p.visitante);
-            const logoL = eqL ? `<img src="data:image/png;base64,${eqL.logo}" class="mini-logo">` : '';
-            const logoV = eqV ? `<img src="data:image/png;base64,${eqV.logo}" class="mini-logo">` : '';
+            
+            const getLogoTag = (eq) => {
+                if (!eq?.logo) return '';
+                const src = (eq.logo.startsWith('http') || eq.logo.startsWith('/')) ? eq.logo : `data:image/png;base64,${eq.logo}`;
+                return `<img src="${src}" class="mini-logo">`;
+            };
 
             html += `
                 <div class="match-bracket">
                     <div class="team-bracket ${winL ? 'winner' : ''}">
-                        <span>${logoL} ${p.local || 'TBD'}</span>
+                        <span>${getLogoTag(eqL)} ${p.local || 'TBD'}</span>
                         <span class="score-bracket">${p.goles_l ?? '-'}</span>
                     </div>
                     <div class="team-bracket ${winV ? 'winner' : ''}">
-                        <span>${logoV} ${p.visitante || 'TBD'}</span>
+                        <span>${getLogoTag(eqV)} ${p.visitante || 'TBD'}</span>
                         <span class="score-bracket">${p.goles_v ?? '-'}</span>
                     </div>
                 </div>`;
@@ -259,6 +264,108 @@ function llenarSelectsEquipos() {
         if (el) el.innerHTML = nombres.map(n => `<option value="${n}">${n}</option>`).join("");
     });
 }
+
+// --- GESTIÓN DE EQUIPOS (NUEVO) ---
+
+async function subirLogoAlServidor(file) {
+    if (!file) return null;
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+        const response = await fetch('/upload_logo', {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) throw new Error("Error al subir imagen");
+        const data = await response.json();
+        return data.logo_url;
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+}
+
+async function agregarEquipo() {
+    const nombre = document.getElementById("new-team-name").value.trim();
+    const grupo = document.getElementById("new-team-group").value;
+    const logoFile = document.getElementById("new-team-logo").files[0];
+
+    if (!nombre) { alert("El nombre es obligatorio"); return; }
+    
+    const logoUrl = await subirLogoAlServidor(logoFile);
+    const id = nombre.toLowerCase().replace(/\s+/g, '_');
+
+    torneoData.equipos[id] = {
+        nombre: nombre,
+        grupo: grupo,
+        logo: logoUrl || "",
+        pj: 0, pg: 0, pe: 0, pp: 0, gf: 0, gc: 0, pts: 0
+    };
+
+    alert("Equipo creado localmente. ¡Recuerda Guardar Todo!");
+    document.getElementById("new-team-name").value = "";
+    document.getElementById("new-team-logo").value = "";
+    document.getElementById("file-name-display").innerText = "Sin archivo";
+    actualizarInterfaz();
+}
+
+function renderizarAdminEquipos() {
+    const list = document.getElementById("admin-teams-list");
+    if (!list) return;
+
+    list.innerHTML = Object.keys(torneoData.equipos).map(id => {
+        const eq = torneoData.equipos[id];
+        const logoSrc = eq.logo ? (eq.logo.startsWith('http') || eq.logo.startsWith('/') ? eq.logo : `data:image/png;base64,${eq.logo}`) : '';
+        
+        return `
+        <div class="admin-item" style="display:grid; grid-template-columns: 50px 1fr auto; gap:10px; align-items:center; background:rgba(255,255,255,0.05); padding:10px; margin-bottom:10px; border-radius:8px;">
+            <img src="${logoSrc}" style="width:40px; height:40px; border-radius:5px; object-fit:contain;">
+            <div>
+                <input type="text" value="${eq.nombre}" onchange="editarNombreEquipo('${id}', this.value)" style="width:100%; margin-bottom:5px;">
+                <select onchange="editarGrupoEquipo('${id}', this.value)" style="width:100px; font-size:0.7rem;">
+                    <option value="A" ${eq.grupo==='A'?'selected':''}>Grupo A</option>
+                    <option value="B" ${eq.grupo==='B'?'selected':''}>Grupo B</option>
+                    <option value="C" ${eq.grupo==='C'?'selected':''}>Grupo C</option>
+                    <option value="D" ${eq.grupo==='D'?'selected':''}>Grupo D</option>
+                    <option value="SIN GRUPO" ${eq.grupo==='SIN GRUPO'?'selected':''}>Sin Grupo</option>
+                </select>
+            </div>
+            <div style="text-align:right;">
+                <input type="file" id="update-logo-${id}" accept="image/*" style="display:none;" onchange="actualizarLogoEquipo('${id}', this.files[0])">
+                <button class="btn-small" onclick="document.getElementById('update-logo-${id}').click()">🖼️ Logo</button>
+                <button class="btn-small" style="background:#cc0000;" onclick="eliminarEquipo('${id}')">🗑️</button>
+            </div>
+        </div>`;
+    }).join("");
+}
+
+function editarNombreEquipo(id, nuevoNombre) {
+    torneoData.equipos[id].nombre = nuevoNombre;
+    actualizarInterfaz();
+}
+
+function editarGrupoEquipo(id, nuevoGrupo) {
+    torneoData.equipos[id].grupo = nuevoGrupo;
+    actualizarInterfaz();
+}
+
+async function actualizarLogoEquipo(id, file) {
+    const url = await subirLogoAlServidor(file);
+    if (url) {
+        torneoData.equipos[id].logo = url;
+        actualizarInterfaz();
+    }
+}
+
+function eliminarEquipo(id) {
+    if (confirm(`¿Eliminar al equipo ${torneoData.equipos[id].nombre}? Se borrará de tablas y partidos.`)) {
+        delete torneoData.equipos[id];
+        actualizarInterfaz();
+    }
+}
+
+// --- RESTO DE GESTIÓN (PARTIDOS, GOLEADORES, FASE FINAL) ---
 
 function renderizarAdminPartidos() {
     const list = document.getElementById("admin-partidos-list");
@@ -332,13 +439,10 @@ function eliminarGoleador(i) {
     if (confirm("¿Eliminar goleador?")) { torneoData.goleadores.splice(i, 1); actualizarInterfaz(); }
 }
 
-// --- NUEVAS FUNCIONES PARA GESTIONAR LA FASE FINAL DESDE ADMIN CON SELECTS ---
-
 function renderizarAdminFaseFinal() {
     const container = document.getElementById("admin-fase-final-list");
     if (!container || !torneoData.fase_final) return;
 
-    // Obtenemos los nombres de los equipos para el select
     const nombresEquipos = Object.values(torneoData.equipos).map(e => e.nombre).sort();
     const opcionesEquipos = `<option value="">TBD (Por definir)</option>` + 
                             nombresEquipos.map(n => `<option value="${n}">${n}</option>`).join("");
@@ -355,8 +459,6 @@ function renderizarAdminFaseFinal() {
 
         partidos.forEach((p, i) => {
             if (!p) return;
-
-            // Marcamos el equipo seleccionado actualmente
             const selL = opcionesEquipos.replace(`value="${p.local}"`, `value="${p.local}" selected`);
             const selV = opcionesEquipos.replace(`value="${p.visitante}"`, `value="${p.visitante}" selected`);
 
@@ -402,17 +504,17 @@ function guardarResultadoFaseFinal(ronda, index) {
 // ==========================================
 async function guardarCambiosServidor() {
     try {
-        const response = await fetch('http://127.0.0.1:8000/guardar', {
+        const response = await fetch('/guardar', { // URL RELATIVA
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(torneoData)
         });
         if (response.ok) {
-            alert("✅ ¡Éxito! Los cambios se guardaron permanentemente.");
+            alert("✅ ¡Éxito! Los cambios y logos se guardaron permanentemente.");
         } else {
             alert("❌ Error: El servidor rechazó la petición.");
         }
     } catch (e) {
-        alert("❌ Error: No se pudo conectar con el servidor (main.py).");
+        alert("❌ Error: No se pudo conectar con el servidor.");
     }
 }
