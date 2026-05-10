@@ -458,7 +458,10 @@ hr {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin: 20px 0;
 }
-
+/* Oculta todas las pestañas por defecto al cargar la página */
+.tab-content {
+    display: none;
+}
 /* Ajustes adicionales para que el panel admin no se vea apretado en móvil */
 @media (max-width: 768px) {
     .admin-form div {
