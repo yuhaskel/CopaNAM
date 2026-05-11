@@ -54,9 +54,9 @@ function actualizarInterfaz() {
 // Función auxiliar para gestionar logos (soporta Base64 y rutas de archivo)
 function obtenerSrcLogo(logo) {
     if (!logo) return "";
-    if (logo.startsWith('http') || logo.startsWith('/')) {
-        return logo;
-    }
+    // Si la ruta ya empieza con /logos/..., el navegador usará automáticamente el protocolo seguro del sitio
+    if (logo.startsWith('/')) return logo; 
+    if (logo.startsWith('http')) return logo.replace('http://', 'https://'); // Fuerza https si viene de afuera
     return `data:image/png;base64,${logo}`;
 }
 
