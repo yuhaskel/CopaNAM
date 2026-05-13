@@ -257,18 +257,43 @@ function renderizarFaseFinal() {
 // 4. LÓGICA DE ADMINISTRACIÓN
 // ==========================================
 
-function verificarPassword() {
+async function verificarPassword() {
     const pass = document.getElementById("admin-password").value;
-    if (pass === "organizadores2026") {
-        document.getElementById("admin-login").style.display = "none";
-        document.getElementById("admin-panel").style.display = "block";
-    } else { alert("Clave incorrecta"); }
-}
+    
+    try {
+        // Enviamos la clave al nuevo endpoint /login en el main.py
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password: pass })
+        });
 
+        if (response.ok) {
+            // Si el servidor responde 200 (OK), la clave es correcta
+            document.getElementById("admin-login").style.display = "none";
+            document.getElementById("admin-panel").style.display = "block";
+            
+            // Opcional: Guardamos en la memoria de la pestaña que estamos logueados
+            sessionStorage.setItem("admin_session", "active");
+        } else {
+            // Si el servidor responde 401 u otro error
+            alert("❌ Clave incorrecta. Acceso denegado.");
+        }
+    } catch (error) {
+        // Si hay un error de red o el servidor está caído
+        console.error("Error en el login:", error);
+        alert("❌ Error de conexión con el servidor.");
+    }
+}
 function cerrarSesion() {
     document.getElementById("admin-login").style.display = "block";
     document.getElementById("admin-panel").style.display = "none";
     document.getElementById("admin-password").value = "";
+    
+    // Limpiamos la sesión
+    sessionStorage.removeItem("admin_session");
 }
 
 function llenarSelectsEquipos() {
