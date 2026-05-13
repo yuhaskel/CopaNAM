@@ -49,14 +49,34 @@ app.add_middleware(
 async def inicio():
     return FileResponse('index.html')
 
-# 2. Servir el JSON desde el disco persistente
+# 2. LOGIN SEGURO (NUEVO)
+# Este endpoint recibe la clave del frontend y la compara con la variable de entorno
+@app.post("/login")
+async def login(request: Request):
+    try:
+        data = await request.json()
+        password_enviada = data.get("password")
+        
+        # Obtenemos la clave secreta configurada en el panel de Render
+        # Si no existe, usamos una por defecto para pruebas locales
+        password_real = os.environ.get("ADMIN_PASSWORD", "organizadores2026")
+        
+        if password_enviada == password_real:
+            return {"status": "success", "auth": True}
+        else:
+            # Si la clave es incorrecta, devolvemos un error 401 (No autorizado)
+            raise HTTPException(status_code=401, detail="Clave incorrecta")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Error en el formato de datos")
+
+# 3. Servir el JSON desde el disco persistente
 @app.get("/torneo_data.json")
 async def obtener_datos():
     if os.path.exists(DATA_FILE):
         return FileResponse(DATA_FILE)
     raise HTTPException(status_code=404, detail="Archivo de datos no encontrado")
 
-# 3. Guardar datos en el disco persistente
+# 4. Guardar datos en el disco persistente
 @app.post("/guardar")
 async def guardar_datos(request: Request):
     try:
@@ -67,23 +87,21 @@ async def guardar_datos(request: Request):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# 4. SUBIR LOGOS (NUEVO)
+# 5. SUBIR LOGOS
 @app.post("/upload_logo")
 async def upload_logo(file: UploadFile = File(...)):
     try:
-        # Limpiar el nombre del archivo para evitar problemas de rutas
         filename = file.filename.replace(" ", "_")
         file_path = os.path.join(LOGOS_DIR, filename)
         
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
             
-        # Devolvemos la ruta relativa para que el frontend la use
         return {"logo_url": f"/logos/{filename}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al subir logo: {e}")
 
-# 5. SERVIR LOGOS (NUEVO)
+# 6. SERVIR LOGOS
 @app.get("/logos/{filename}")
 async def get_logo(filename: str):
     file_path = os.path.join(LOGOS_DIR, filename)
@@ -92,5 +110,4 @@ async def get_logo(filename: str):
     raise HTTPException(status_code=404, detail="Imagen no encontrada")
 
 # --- ARCHIVOS ESTÁTICOS ---
-# Importante: Las rutas específicas de arriba se evalúan antes que este mount.
 app.mount("/", StaticFiles(directory="./"), name="static")
