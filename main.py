@@ -59,7 +59,7 @@ async def login(request: Request):
         
         # Obtenemos la clave secreta configurada en el panel de Render
         # Si no existe, usamos una por defecto para pruebas locales
-        password_real = os.environ.get("ADMIN_PASSWORD", "organizadores2026")
+        password_real = os.environ.get("ADMIN_PASSWORD", "NAM...2026")
         
         if password_enviada == password_real:
             return {"status": "success", "auth": True}
