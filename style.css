@@ -288,7 +288,7 @@ h2 {
         min-width: 650px; /* Asegura un ancho mínimo para activar el scroll táctil en celulares */
     }
 }
-/* --- 9. DISEÑO COMPACTO PARA EL ADMINISTRADOR DE LA CARTILLA (ESTILO CARDS ORIGINAL) --- */
+/* --- 9. DISEÑO COMPACTO PARA EL ADMINISTRADOR DE LA CARTILLA --- */
 #admin-cartilla-partidos {
     display: flex !important;
     flex-direction: column !important;
@@ -296,15 +296,15 @@ h2 {
     padding: 10px 5px;
 }
 
-/* Estilizamos los inputs de goles para que luzcan profesionales dentro de la tarjeta */
+/* Estilizado de los casilleros numéricos */
 .admin-cartilla-gl, .admin-cartilla-gv {
     width: 45px !important;
     height: 35px !important;
     text-align: center !important;
     font-size: 1.1rem !important;
     font-weight: 900 !important;
-    background: #000422 !important; /* Fondo oscuro idéntico a las tarjetas */
-    color: #ffd700 !important; /* Números dorados de goleadores */
+    background: #000422 !important; /* Fondo oscuro integrado */
+    color: #ffd700 !important; /* Números en color oro */
     border: 1px solid rgba(255, 215, 0, 0.3) !important;
     border-radius: 6px !important;
     padding: 0 !important;
@@ -314,12 +314,4 @@ h2 {
     border-color: #ffd700 !important;
     box-shadow: 0 0 8px rgba(255, 215, 0, 0.4) !important;
     outline: none !important;
-}
-
-/* Forzamos que en pantallas móviles los equipos mantengan su línea horizontal */
-@media (max-width: 600px) {
-    #admin-cartilla-partidos .match-item {
-        flex-direction: row !important;
-        justify-content: space-between !important;
-    }
 }
