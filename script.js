@@ -710,8 +710,8 @@ function renderizarGraficoFavoritos(usuarios) {
 
     let conteo = {};
     usuarios.forEach(u => {
-        if (u.campeon) {
-            const pais = u.campeon.toUpperCase().trim();
+        if (u.campeon_del_mundo) {
+            const pais = u.campeon_del_mundo.toUpperCase().trim();
             if (pais !== "NO ELEGIDO" && pais !== "") {
                 conteo[pais] = (conteo[pais] || 0) + 1;
             }
