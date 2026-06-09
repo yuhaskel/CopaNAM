@@ -279,7 +279,7 @@ function cargarRankingCartilla() {
         .then(data => {
             tbody.innerHTML = "";
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">No hay archivos JSON en la carpeta 'pronosticos'.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Proximamente.</td></tr>`;
                 return;
             }
 
