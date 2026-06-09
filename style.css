@@ -245,12 +245,24 @@ h2 {
     box-shadow: 0 6px 16px rgba(255, 215, 0, 0.5);
 }
 
-/* --- 8. ESTILOS EXCLUSIVOS: TABLA DE LA CARTILLA MUNDIAL (NUEVO) --- */
+/* --- 8. ESTILOS EXCLUSIVOS: TABLA DE LA CARTILLA MUNDIAL (CORREGIDO) --- */
 .posiciones-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
     font-size: 0.95rem;
+    table-layout: auto; /* Fuerza al navegador a calcular anchos balanceados de forma automática */
+}
+
+.posiciones-table th, .posiciones-table td {
+    padding: 14px 10px;
+    vertical-align: middle;
+    text-align: center; /* Centra perfectamente los números, medallas y emojis bajo su título */
+}
+
+/* Forzamos que la columna del Participante (columna 2) se alinee a la izquierda para mejor lectura */
+.posiciones-table td:nth-child(2), .posiciones-table th:nth-child(2) {
+    text-align: left;
 }
 
 .posiciones-table th {
@@ -270,14 +282,9 @@ h2 {
     background: rgba(255, 255, 255, 0.02);
 }
 
-.posiciones-table td, .posiciones-table th {
-    padding: 14px 10px;
-    vertical-align: middle;
-}
-
 /* Responsividad para tablas en pantallas muy pequeñas */
 @media (max-width: 600px) {
     .posiciones-table {
-        min-width: 650px; /* Asegura un ancho mínimo para activar el scroll táctil */
+        min-width: 650px; /* Asegura un ancho mínimo para activar el scroll táctil en celulares */
     }
 }
