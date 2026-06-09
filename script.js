@@ -652,7 +652,7 @@ async function guardarCambiosServidor() {
 }
 
 // ==========================================
-// 4C. LOGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA (DISEÑO ORIGINAL RECUPERADO)
+// 4C. LOGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA (DISEÑO PROFESIONAL REPARADO)
 // ==========================================
 function cargarFormularioAdminCartilla() {
     const contenedor = document.getElementById("admin-cartilla-partidos");
@@ -664,16 +664,28 @@ function cargarFormularioAdminCartilla() {
             contenedor.innerHTML = "";
             
             PARTIDOS_MUNDIAL.forEach((partido) => {
-                const [local, visita] = partido.split(" VS ");
+                // Separación inteligente tolerante a espacios alrededor del VS
+                const partes = partido.split(/\s*VS\s*/);
+                const local = partes[0];
+                const visita = partes[1];
+                
                 const datosPartido = resultadosGuardados[partido] || { goles_local: "", goles_visita: "" };
                 
-                // Creamos el contenedor con la clase exacta de los partidos de la liga
                 const div = document.createElement("div");
-                div.className = "match-item"; // <-- Recupera el diseño horizontal nativo
+                div.className = "match-item"; // Aplica el diseño estético de tus tarjetas
+                
+                // Forzamos los estilos para que se vea idéntico a las tarjetas originales
+                div.style.display = "flex";
+                div.style.alignItems = "center";
+                div.style.justifyContent = "space-between";
+                div.style.background = "rgba(255, 255, 255, 0.03)";
+                div.style.border = "1px solid rgba(255, 255, 255, 0.05)";
+                div.style.padding = "12px 15px";
                 div.style.marginBottom = "10px";
+                div.style.borderRadius = "8px";
                 
                 div.innerHTML = `
-                    <div class="team-cell" style="justify-content: flex-end; width: 38%; font-weight: bold;">
+                    <div style="text-align: right; width: 38%; font-weight: bold; color: #fff; font-size: 0.9rem;">
                         ${local}
                     </div>
                     <div class="score-box-admin" style="display: flex; align-items: center; gap: 8px; justify-content: center; width: 24%;">
@@ -681,7 +693,7 @@ function cargarFormularioAdminCartilla() {
                         <span style="opacity: 0.5; font-weight: bold; color: #ffd700;">-</span>
                         <input type="number" class="admin-cartilla-gv" data-partido="${partido}" value="${datosPartido.goles_visita !== null && datosPartido.goles_visita !== undefined ? datosPartido.goles_visita : ''}">
                     </div>
-                    <div class="team-cell" style="justify-content: flex-start; width: 38%; font-weight: bold;">
+                    <div style="text-align: left; width: 38%; font-weight: bold; color: #fff; font-size: 0.9rem;">
                         ${visita}
                     </div>
                 `;
