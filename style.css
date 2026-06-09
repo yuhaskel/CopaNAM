@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght=300;400;700;900&display=swap');
 
 /* --- 1. RESET Y ESTILOS GLOBALES --- */
 * {
@@ -38,78 +38,69 @@ header {
 }
 
 .txt-blue { color: #4a86e8; }
-.txt-red { color: #ff4a4a; }
-.txt-gold { color: #ffd700; font-weight: bold; }
+.txt-red { color: #ff4b4b; }
+.txt-gold { color: #FFD700; font-weight: bold; }
 
 .tabs-nav {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     margin-bottom: 30px;
+    gap: 15px;
     flex-wrap: wrap;
     padding: 0 10px;
 }
 
 .tab-link {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    padding: 10px 20px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 12px 15px;
+    cursor: pointer;
     font-size: 0.9rem;
     font-weight: 700;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    transition: 0.3s;
+    border-bottom: 3px solid transparent;
+    text-transform: uppercase;
 }
 
 .tab-link:hover {
-    background: rgba(255, 255, 255, 0.15);
     color: white;
 }
 
 .tab-link.active {
-    background: #ffd700;
-    color: #000422;
-    border-color: #ffd700;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-}
-
-/* --- 3. CONTENEDOR Y TARJETAS --- */
-.content-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px 60px 20px;
+    color: white;
+    border-bottom: 3px solid #ff4b4b;
 }
 
 .tab-content {
-    display: none;
+    display: none; /* Evita el efecto cascada al cargar */
 }
 
-h2 {
-    font-size: 1.8rem;
-    font-weight: 900;
-    margin-bottom: 20px;
-    text-align: center;
+/* --- 3. CONTENEDORES Y TARJETAS ORIGINALES --- */
+.content-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 15px 50px 15px;
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
+    background: rgba(0, 10, 60, 0.4);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 
-/* --- 4. DISEÑO DE FILAS (LIGA LOCAL) --- */
+h2 { margin-bottom: 20px; font-weight: 900; text-align: center; }
+
+/* --- 4. TABLAS Y GRILLAS (VISTA PC) --- */
 .header-grid {
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.4);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 2px solid #FFD700;
+    font-weight: 900;
+    color: #FFD700;
 }
 
 .grid-posiciones {
@@ -118,9 +109,11 @@ h2 {
     align-items: center;
     gap: 5px;
     min-width: 450px;
+    padding: 10px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.grid-posiciones span, .grid-posiciones div {
+.grid-posiciones span:not(:first-child) {
     text-align: center;
 }
 
@@ -128,9 +121,13 @@ h2 {
     text-align: left;
 }
 
-.grid-posiciones {
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+.grid-goleadores {
+    display: grid;
+    grid-template-columns: 50px 150px 1fr 80px;
+    padding: 12px 20px;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .team-cell {
@@ -141,47 +138,154 @@ h2 {
 }
 
 .mini-logo {
-    width: 25px;
-    height: 25px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
 }
 
-/* --- 5. COMPORTAMIENTO RESPONSIVO --- */
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 5px;
-}
-
-.grid-posiciones {
+/* --- 5. RESULTADOS Y PRÓXIMOS --- */
+.match-item {
     display: grid;
-    grid-template-columns: 160px 40px 40px 40px 40px 40px 50px;
+    grid-template-columns: 1fr 80px 1fr;
     align-items: center;
-    gap: 5px;
-    min-width: 450px;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    font-weight: 700;
 }
 
-.table-container::-webkit-scrollbar {
-    height: 4px;
-}
-.table-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 215, 0, 0.3);
-    border-radius: 10px;
+.score-box {
+    background: #FFD700;
+    color: black;
+    padding: 4px;
+    border-radius: 4px;
+    font-weight: 900;
 }
 
-/* --- 6. EFECTO DORADO: GOLEADOR DESTACADO --- */
+.date-divider {
+    background: #FFD700;
+    color: black;
+    padding: 6px 15px;
+    font-weight: 900;
+    font-size: 0.85rem;
+    display: inline-block;
+    text-transform: uppercase;
+    border-radius: 6px 6px 0 0;
+    margin-top: 25px;
+}
+
+.date-divider + .card {
+    border-top-left-radius: 0 !important;
+    border-top: 2px solid #FFD700;
+}
+
+/* --- 6. FASE FINAL (BRACKETS ORDENADOS EN COLUMNAS) --- */
+.bracket-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.bracket-round {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    min-width: 200px;
+}
+
+.match-bracket {
+    background: rgba(0, 10, 60, 0.6);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    margin: 10px 0;
+    padding: 10px;
+    position: relative;
+}
+
+.team-bracket {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 0.85rem;
+}
+
+.team-bracket.winner {
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.04);
+}
+
+.score-bracket {
+    background: #1a2a6c;
+    min-width: 25px;
+    text-align: center;
+    border-radius: 4px;
+    font-weight: 900;
+    color: #FFD700;
+}
+
+.bracket-logo {
+    display: block;
+    max-width: 180px;
+    height: auto;
+    margin: 30px auto 10px;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+}
+
+/* --- 7. ESTILOS EXCLUSIVOS: TABLA DE LA CARTILLA MUNDIAL --- */
+.posiciones-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    table-layout: auto;
+}
+
+.posiciones-table th, .posiciones-table td {
+    padding: 14px 10px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.posiciones-table td:nth-child(2), .posiciones-table th:nth-child(2) {
+    text-align: left;
+}
+
+.posiciones-table th {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.posiciones-table tr {
+    transition: background-color 0.2s ease;
+}
+
+.posiciones-table tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* --- 8. EFECTO DORADO COMPLETO: GOLEADOR DESTACADO --- */
 .top-scorer-card {
     background: linear-gradient(90deg, rgba(255, 215, 0, 0.25) 0%, rgba(0, 10, 60, 0.9) 100%) !important;
     border: 2px solid #FFD700 !important;
     border-radius: 10px !important;
     margin: 8px 0 !important;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2) !important;
+    transform: scale(1.01);
 }
 
 .top-scorer-name {
     color: #FFD700 !important;
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    font-weight: 900 !important;
+    font-size: 1.15rem !important;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important;
 }
 
 .top-scorer-card .txt-gold {
@@ -189,7 +293,7 @@ h2 {
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);
 }
 
-/* --- 7. BANNER DE LA CARTILLA MUNDIAL --- */
+/* --- 9. BANNER DE LA CARTILLA MUNDIAL --- */
 .banner-cartilla {
     background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
     border: 1.5px solid #ffd700;
@@ -245,50 +349,15 @@ h2 {
     box-shadow: 0 6px 16px rgba(255, 215, 0, 0.5);
 }
 
-/* --- 8. ESTILOS EXCLUSIVOS: TABLA DE LA CARTILLA MUNDIAL (CORREGIDO) --- */
-.posiciones-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 0.95rem;
-    table-layout: auto; /* Fuerza al navegador a calcular anchos balanceados de forma automática */
+/* --- 10. ADMINISTRACIÓN --- */
+.admin-form input, .admin-form select {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(125, 177, 255, 0.4);
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
 }
 
-.posiciones-table th, .posiciones-table td {
-    padding: 14px 10px;
-    vertical-align: middle;
-    text-align: center; /* Centra perfectamente los números, medallas y emojis bajo su título */
-}
-
-/* Forzamos que la columna del Participante (columna 2) se alinee a la izquierda para mejor lectura */
-.posiciones-table td:nth-child(2), .posiciones-table th:nth-child(2) {
-    text-align: left;
-}
-
-.posiciones-table th {
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-.posiciones-table tr {
-    transition: background-color 0.2s ease;
-}
-
-.posiciones-table tr:hover {
-    background: rgba(255, 255, 255, 0.02);
-}
-
-/* Responsividad para tablas en pantallas muy pequeñas */
-@media (max-width: 600px) {
-    .posiciones-table {
-        min-width: 650px; /* Asegura un ancho mínimo para activar el scroll táctil en celulares */
-    }
-}
-/* --- 9. DISEÑO COMPACTO PARA EL ADMINISTRADOR DE LA CARTILLA --- */
 #admin-cartilla-partidos {
     display: flex !important;
     flex-direction: column !important;
@@ -296,15 +365,14 @@ h2 {
     padding: 10px 5px;
 }
 
-/* Estilizado de los casilleros numéricos */
 .admin-cartilla-gl, .admin-cartilla-gv {
     width: 45px !important;
     height: 35px !important;
     text-align: center !important;
     font-size: 1.1rem !important;
     font-weight: 900 !important;
-    background: #000422 !important; /* Fondo oscuro integrado */
-    color: #ffd700 !important; /* Números en color oro */
+    background: #000422 !important;
+    color: #ffd700 !important;
     border: 1px solid rgba(255, 215, 0, 0.3) !important;
     border-radius: 6px !important;
     padding: 0 !important;
@@ -314,4 +382,118 @@ h2 {
     border-color: #ffd700 !important;
     box-shadow: 0 0 8px rgba(255, 215, 0, 0.4) !important;
     outline: none !important;
+}
+
+.btn-add {
+    background: #4a86e8;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-save {
+    background: #10b981;
+    color: white;
+    padding: 15px;
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 900;
+    margin-top: 25px;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-file {
+    background: #fbbf24;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.admin-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 0; }
+
+/* --- 11. RESPONSIVE MÓVIL Y SCROLLS --- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+}
+
+.table-container::-webkit-scrollbar {
+    height: 4px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    body { padding: 15px 10px; }
+    h1 { font-size: 1.6rem; }
+
+    .grid-posiciones {
+        grid-template-columns: 110px repeat(6, 45px);
+        font-size: 0.75rem;
+    }
+
+    .grid-goleadores {
+        grid-template-columns: 35px 80px 1fr 50px;
+        font-size: 0.8rem;
+    }
+
+    .match-item {
+        grid-template-columns: 1fr 65px 1fr;
+        padding: 12px 5px;
+        font-size: 0.75rem;
+    }
+
+    .team-cell {
+        gap: 4px;
+        line-height: 1.1;
+        word-break: break-word;
+    }
+
+    .match-item .mini-logo {
+        width: 20px;
+        height: 20px;
+    }
+
+    .score-box {
+        min-width: 55px;
+        font-size: 0.8rem;
+    }
+
+    .admin-form div {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .admin-item {
+        grid-template-columns: 40px 1fr !important;
+    }
+
+    .admin-item div:last-child {
+        grid-column: 1 / span 2;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+    }
+    
+    .posiciones-table {
+        min-width: 650px;
+    }
 }
