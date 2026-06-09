@@ -288,67 +288,38 @@ h2 {
         min-width: 650px; /* Asegura un ancho mínimo para activar el scroll táctil en celulares */
     }
 }
-/* --- 9. DISEÑO COMPACTO PARA EL ADMINISTRADOR DE LA CARTILLA --- */
+/* --- 9. DISEÑO COMPACTO PARA EL ADMINISTRADOR DE LA CARTILLA (ESTILO CARDS ORIGINAL) --- */
 #admin-cartilla-partidos {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); /* Crea filas inteligentes en paralelo si hay espacio */
-    gap: 15px !important;
-    padding: 10px;
-}
-
-#admin-cartilla-partidos > div {
     display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    background: rgba(255, 255, 255, 0.03) !important;
-    padding: 10px 15px !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Alineación de los nombres de los equipos */
-#admin-cartilla-partidos span:first-child {
-    text-align: right !important;
-    font-size: 0.9rem !important;
-    width: 38% !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-#admin-cartilla-partidos span:last-child {
-    text-align: left !important;
-    font-size: 0.9rem !important;
-    width: 38% !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Caja contenedora de los inputs numéricos de goles */
-#admin-cartilla-partidos div:nth-child(2) {
-    display: flex !important;
-    align-items: center !important;
+    flex-direction: column !important;
     gap: 10px !important;
-    justify-content: center !important;
-    width: 24% !important;
+    padding: 10px 5px;
 }
 
-/* Estilo para los cuadritos de los números */
+/* Estilizamos los inputs de goles para que luzcan profesionales dentro de la tarjeta */
 .admin-cartilla-gl, .admin-cartilla-gv {
     width: 45px !important;
     height: 35px !important;
     text-align: center !important;
-    font-size: 1rem !important;
-    font-weight: bold !important;
-    background: #111827 !important;
-    color: #fff !important;
-    border: 1px solid #374151 !important;
+    font-size: 1.1rem !important;
+    font-weight: 900 !important;
+    background: #000422 !important; /* Fondo oscuro idéntico a las tarjetas */
+    color: #ffd700 !important; /* Números dorados de goleadores */
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
     border-radius: 6px !important;
     padding: 0 !important;
 }
 
 .admin-cartilla-gl:focus, .admin-cartilla-gv:focus {
     border-color: #ffd700 !important;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4) !important;
     outline: none !important;
+}
+
+/* Forzamos que en pantallas móviles los equipos mantengan su línea horizontal */
+@media (max-width: 600px) {
+    #admin-cartilla-partidos .match-item {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+    }
 }
