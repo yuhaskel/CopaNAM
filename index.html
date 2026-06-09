@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>#NAMLEAGUE2026</title>
-    <link rel="stylesheet" href="style.css?v=1.1">
+    <link rel="stylesheet" href="style.css?v=1.4">
 </head>
 <body>
     <div class="background-overlay"></div>
@@ -13,6 +13,7 @@
         <h1 class="logo-title">#<span class="txt-blue">N</span><span class="txt-red">A</span>MLEAGUE2026</h1>
     </header>
 
+    <!-- BANNER CON EL ESTILO ORIGINAL AJUSTADO -->
     <div class="banner-cartilla">
         <div class="banner-content">
             <span class="badge-nuevo">NUEVO</span>
@@ -21,6 +22,7 @@
         </div>
     </div>
 
+    <!-- MENÚ DE NAVEGACIÓN IDÉNTICO AL ORIGINAL CON LA NUEVA PESTAÑA -->
     <nav class="tabs-nav">
         <button class="tab-link active" onclick="openTab(event, 'posiciones')">📊 POSICIONES</button>
         <button class="tab-link" onclick="openTab(event, 'proximos')">🗓️ PRÓXIMOS</button>
@@ -31,6 +33,7 @@
         <button class="tab-link" onclick="openTab(event, 'admin')">🔐 ADMIN</button>
     </nav>
 
+    <!-- CONTENEDOR DE CONTENIDO ORIGINAL DE 1100PX -->
     <div class="content-container">
         <section id="posiciones" class="tab-content" style="display: block;"></section>
         <section id="proximos" class="tab-content"></section>
@@ -38,31 +41,34 @@
         <section id="fase-final" class="tab-content"></section>
         <section id="goleadores" class="tab-content"></section>
 
+        <!-- SECCIÓN PÚBLICA DE LA CARTILLA INTEGRADA AL ESTILO ORIGINAL -->
         <section id="cartilla" class="tab-content">
             <div class="card">
-                <h2 style="text-align: center; color: #ffd700; margin-bottom: 10px;">🔮 TABLA DE POSICIONES</h2>
-                <p style="text-align: center; opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px;">
+                <h2>🔮 TABLA DE POSICIONES</h2>
+                <p style="text-align: center; opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px; font-weight: 700;">
                     Resultado Exacto: 3 puntos | Acertar al Ganador o Empate: 1 punto. | En caso de empate se privilegia el mayor número de aciertos exactos.
                 </p>
-                <div class="table-container" style="overflow-x: auto; width: 100%;">
-                    <table class="posiciones-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                <div class="table-container">
+                    <table class="posiciones-table">
                         <thead>
-                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2);">
-                                <th style="padding: 12px 8px; width: 60px; text-align: center;">POS</th>
-                                <th style="padding: 12px 8px;">PARTICIPANTE</th>
-                                <th style="padding: 12px 8px;">CURSO / ESTAMENTO</th>
-                                <th style="padding: 12px 8px; text-align: center;">RESULTADOS EXACTOS</th>
-                                <th style="padding: 12px 8px; text-align: center; color: #ffd700;">PTS</th>
-                                <th style="padding: 12px 8px; color: #60a5fa; text-align: center;">CAMPEÓN DEL MUNDO</th>
+                            <tr class="header-grid">
+                                <th style="width: 60px; text-align: center;">POS</th>
+                                <th>PARTICIPANTE</th>
+                                <th>CURSO / ESTAMENTO</th>
+                                <th style="text-align: center;">RESULTADOS EXACTOS</th>
+                                <th style="text-align: center; color: #FFD700;">PTS</th>
+                                <th style="color: #60a5fa; text-align: center;">CAMPEÓN DEL MUNDO</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-cartilla-body">
-                            </tbody>
+                            <!-- Datos generados dinámicamente -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- SECCIÓN DE ADMINISTRACIÓN IDÉNTICA A LA ORIGINAL -->
         <section id="admin" class="tab-content">
             <div id="admin-login" class="card">
                 <h2>🔐 Acceso Administrador</h2>
@@ -94,7 +100,7 @@
                             <button class="btn-add" onclick="agregarEquipo()">➕ Crear Equipo</button>
                         </div>
                     </div>
-                    <hr style="margin: 20px 0; opacity: 0.1;">
+                    <hr>
                     <h3>Equipos Registrados (Editar Nombre/Grupo/Logo)</h3>
                     <div id="admin-teams-list"></div>
                 </div>
@@ -111,7 +117,7 @@
                             <button class="btn-add" onclick="agendarPartido()">🗓️ Agendar</button>
                         </div>
                     </div>
-                    <hr style="margin: 20px 0; opacity: 0.1;">
+                    <hr>
                     <h3>Partidos Registrados (Editar Goles)</h3>
                     <div id="admin-partidos-list"></div>
                 </div>
@@ -127,7 +133,7 @@
                             <button class="btn-add" onclick="agregarJugador()">➕ Añadir</button>
                         </div>
                     </div>
-                    <hr style="margin: 20px 0; opacity: 0.1;">
+                    <hr>
                     <h3>Modificar Goles existentes</h3>
                     <div id="admin-goleadores-list"></div>
                 </div>
@@ -138,16 +144,17 @@
                     <div id="admin-fase-final-list"></div>
                 </div>
 
+                <!-- CONTENEDOR PARA LOS RESULTADOS REALES DE LA CARTILLA -->
                 <div class="card" style="margin-top: 20px; margin-bottom: 20px;">
                     <h2>🔮 Resultados Reales - Cartilla Mundial</h2>
-                    <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px;">Ingresa los marcadores oficiales de los 20 partidos del mundial.</p>
+                    <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px;">Ingresa los marcadores oficiales de los 20 partidos del mundial. Deja vacíos los encuentros no disputados.</p>
                     
                     <div id="admin-cartilla-partidos" style="display: flex; flex-direction: column; gap: 12px; max-height: 450px; overflow-y: auto; padding-right: 10px; margin-bottom: 15px;"></div>
                     
-                    <button class="btn-save" style="background: #10b981;" onclick="guardarResultadosRealesCartilla()">💾 GUARDAR RESULTADOS DE LA CARTILLA</button>
+                    <button class="btn-save" onclick="guardarResultadosRealesCartilla()">💾 GUARDAR RESULTADOS DE LA CARTILLA</button>
                 </div>
 
-                <button class="btn-save" onclick="guardarCambiosServidor()">💾 GUARDAR TODO EN DISCO (JSON LIGA)</button>
+                <button class="btn-save" style="background: #4a86e8; margin-top: 10px;" onclick="guardarCambiosServidor()">💾 GUARDAR TODO EN DISCO (JSON LIGA)</button>
                 <button class="btn-save" style="background: #444; margin-top: 10px;" onclick="cerrarSesion()">Cerrar Sesión</button>
             </div>
         </section>
