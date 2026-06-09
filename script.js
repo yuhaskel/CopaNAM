@@ -652,32 +652,38 @@ async function guardarCambiosServidor() {
 }
 
 // ==========================================
-// 4C. LOGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA (¡ESTO FALTABA!)
+// 4C. LOGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA (DISEÑO ORIGINAL RECUPERADO)
 // ==========================================
 function cargarFormularioAdminCartilla() {
     const contenedor = document.getElementById("admin-cartilla-partidos");
     if (!contenedor) return;
 
-    // Vamos a buscar al servidor si ya hay marcadores reales guardados
     fetch("/api/cartilla-resultados")
         .then(res => res.json())
         .then(resultadosGuardados => {
             contenedor.innerHTML = "";
             
-            // Recorremos el listado oficial de los 20 partidos para dibujarlos en pantalla
             PARTIDOS_MUNDIAL.forEach((partido) => {
                 const [local, visita] = partido.split(" VS ");
                 const datosPartido = resultadosGuardados[partido] || { goles_local: "", goles_visita: "" };
                 
+                // Creamos el contenedor con la clase exacta de los partidos de la liga
                 const div = document.createElement("div");
+                div.className = "match-item"; // <-- Recupera el diseño horizontal nativo
+                div.style.marginBottom = "10px";
+                
                 div.innerHTML = `
-                    <span>${local}</span>
-                    <div>
+                    <div class="team-cell" style="justify-content: flex-end; width: 38%; font-weight: bold;">
+                        ${local}
+                    </div>
+                    <div class="score-box-admin" style="display: flex; align-items: center; gap: 8px; justify-content: center; width: 24%;">
                         <input type="number" class="admin-cartilla-gl" data-partido="${partido}" value="${datosPartido.goles_local !== null && datosPartido.goles_local !== undefined ? datosPartido.goles_local : ''}">
-                        <span style="font-size: 0.7rem; opacity: 0.5;">-</span>
+                        <span style="opacity: 0.5; font-weight: bold; color: #ffd700;">-</span>
                         <input type="number" class="admin-cartilla-gv" data-partido="${partido}" value="${datosPartido.goles_visita !== null && datosPartido.goles_visita !== undefined ? datosPartido.goles_visita : ''}">
                     </div>
-                    <span>${visita}</span>
+                    <div class="team-cell" style="justify-content: flex-start; width: 38%; font-weight: bold;">
+                        ${visita}
+                    </div>
                 `;
                 contenedor.appendChild(div);
             });
