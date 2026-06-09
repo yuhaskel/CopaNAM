@@ -3,6 +3,15 @@
 // ==========================================
 let torneoData = null;
 
+// LISTA OFICIAL Y CORREGIDA DE LOS 20 PARTIDOS (Coincide exactamente con Python)
+const PARTIDOS_MUNDIAL = [
+    "México VS Sudáfrica", "Brasil VS Marruecos", "Países Bajos VS Japón", "Costa de Marfil VS Ecuador",
+    "Francia VS Senegal", "Argelia VS Argentina", "Inglaterra VS Croacia", "México VS Corea del Sur",
+    "Turquía VS Paraguay", "Países Bajos VS Suecia", "Alemania VS Costa de Marfil", "Argentina VS Austria",
+    "Noruega VS Senegal", "Brasil VS Escocia", "Ecuador VS Alemania", "Turquía VS EEUU", 
+    "Paraguay VS Australia", "Noruega VS Francia", "Uruguay VS España", "Colombia VS Portugal"
+];
+
 document.addEventListener("DOMContentLoaded", () => {
     cargarTorneo();
 });
@@ -51,17 +60,15 @@ function actualizarInterfaz() {
     renderizarAdminFaseFinal();
 }
 
-// Función auxiliar para gestionar logos (soporta Base64 y rutas de archivo)
 function obtenerSrcLogo(logo) {
     if (!logo) return "";
-    // Si la ruta ya empieza con /logos/..., el navegador usará automáticamente el protocolo seguro del sitio
     if (logo.startsWith('/')) return logo; 
-    if (logo.startsWith('http')) return logo.replace('http://', 'https://'); // Fuerza https si viene de afuera
+    if (logo.startsWith('http')) return logo.replace('http://', 'https://'); 
     return `data:image/png;base64,${logo}`;
 }
 
 // ==========================================
-// 2. NAVEGACIÓN (TABS)
+// 2. NAVEGACIÓN (TABS - INTERCEPTADA)
 // ==========================================
 function openTab(evt, tabName) {
     let i, tabcontent, tablinks;
@@ -72,13 +79,26 @@ function openTab(evt, tabName) {
     for (i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
     
     document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.classList.add("active");
+    
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add("active");
+    } else {
+        const botones = document.getElementsByClassName("tab-link");
+        for (i = 0; i < botones.length; i++) {
+            if (botones[i].getAttribute("onclick").includes(`'${tabName}'`)) {
+                botones[i].classList.add("active");
+            }
+        }
+    }
+
+    if (tabName === 'cartilla') {
+        cargarRankingCartilla();
+    }
 }
 
 // ==========================================
-// 3. RENDERIZADO PÚBLICO
+// 3. RENDERIZADO PÚBLICO LIGA LOCAL
 // ==========================================
-
 function renderizarPosiciones() {
     const container = document.getElementById("posiciones");
     if (!container) return;
@@ -111,7 +131,6 @@ function renderizarPosiciones() {
     const grupos = [...new Set(Object.values(stats).map(s => s.grupo))].sort();
 
     grupos.forEach(g => {
-        // Envolvemos cada tabla en un div 'table-container' para el scroll móvil
         html += `<div class="table-container">
                     <div class="card" style="margin-bottom:15px; min-width: 450px;">
                         <div class="header-grid grid-posiciones">
@@ -137,7 +156,7 @@ function renderizarResultadosYProximos() {
     const fechasUnicas = [...new Set(torneoData.partidos.map(p => p.fecha))].sort().reverse();
     
     let resHtml = `<h2>⚽ Últimos Resultados</h2>`;
-    let proxHtml = `<h2>🗓️ Próximos Partidos</h2>`;
+    let proxHtml = `<h2>🗓️ Próximas Fechas</h2>`;
 
     fechasUnicas.forEach(fecha => {
         const partidosDeFecha = torneoData.partidos.filter(p => p.fecha === fecha);
@@ -179,20 +198,15 @@ function renderizarGoleadores() {
     const container = document.getElementById("goleadores");
     if (!container) return;
 
-    // Abrimos el contenedor y la tarjeta
     let html = `<h2>👟 Tabla de Goleadores</h2>
                 <div class="table-container">
                 <div class="card" style="min-width: 480px;">
                 <div class="header-grid grid-goleadores"><span></span><span>EQUIPO</span><span>JUGADOR</span><span style="text-align:center;">GOLES</span></div>`;
     
-    // Ordenamos la lista de mayor a menor goleador
     const lista = [...torneoData.goleadores].sort((a,b) => b.goles - a.goles);
 
     lista.forEach((g, i) => {
         const eq = Object.values(torneoData.equipos).find(e => e.nombre === g.equipo);
-        
-        // --- LÓGICA DE DESTACADO ---
-        // Si el índice 'i' es 0 (el primero de la lista), aplicamos las clases de oro
         const esTopCard = i === 0 ? "top-scorer-card" : "";
         const esTopName = i === 0 ? "top-scorer-name" : "";
         
@@ -204,7 +218,6 @@ function renderizarGoleadores() {
                 </div>`;
     });
     
-    // Cerramos los divs y lo inyectamos al HTML
     container.innerHTML = html + `</div></div>`;
 }
 
@@ -230,7 +243,6 @@ function renderizarFaseFinal() {
             const eqL = Object.values(torneoData.equipos).find(e => e.nombre === p.local);
             const eqV = Object.values(torneoData.equipos).find(e => e.nombre === p.visitante);
 
-            // LOGICA MEJORADA: Solo mostrar el tag de imagen si el equipo no es TBD y tiene logo
             const logoL = (eqL && p.local && p.local !== 'TBD') ? `<img src="${obtenerSrcLogo(eqL.logo)}" class="mini-logo"> ` : '';
             const logoV = (eqV && p.visitante && p.visitante !== 'TBD') ? `<img src="${obtenerSrcLogo(eqV.logo)}" class="mini-logo"> ` : '';
 
@@ -254,45 +266,82 @@ function renderizarFaseFinal() {
 }
 
 // ==========================================
-// 4. LÓGICA DE ADMINISTRACIÓN
+// 3B. VISTA PÚBLICA EXCLUSIVA: CARTILLA MUNDIAL
 // ==========================================
+function cargarRankingCartilla() {
+    const tbody = document.getElementById("tabla-cartilla-body");
+    if (!tbody) return;
 
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Calculando puntajes en vivo desde /pronosticos...</td></tr>`;
+
+    fetch("/api/ranking-cartilla")
+        .then(res => res.json())
+        .then(data => {
+            tbody.innerHTML = "";
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">No hay archivos JSON en la carpeta 'pronosticos'.</td></tr>`;
+                return;
+            }
+
+            data.forEach((user, idx) => {
+                const tr = document.createElement("tr");
+                tr.style.borderBottom = "1px solid rgba(255, 255, 255, 0.05)";
+                
+                let pos = idx + 1;
+                if (pos === 1) pos = "🥇";
+                else if (pos === 2) pos = "🥈";
+                else if (pos === 3) pos = "🥉";
+
+                // EL ORDEN COINCIDE EXACTAMENTE CON LAS 6 CABECERAS DEL HTML
+                tr.innerHTML = `
+                    <td style="padding: 12px 8px; text-align: center; font-weight: bold; font-size: 1.1rem;">${pos}</td>
+                    <td style="padding: 12px 8px; font-weight: bold; color: #fff;">${user.nombre.toUpperCase()}</td>
+                    <td style="padding: 12px 8px; opacity: 0.85;">${user.curso}</td>
+                    <td style="padding: 12px 8px; text-align: center; font-weight: bold;">${user.exactos} 🎯</td>
+                    <td style="padding: 12px 8px; text-align: center; font-weight: bold; color: #ffd700; font-size: 1.15rem;">${user.puntos}</td>
+                    <td style="padding: 12px 8px; text-align: center; font-style: italic; color: #60a5fa; font-weight: bold; letter-spacing: 0.5px;">${user.campeon.toUpperCase()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding: 25px;">Error al computar los datos de las cartillas.</td></tr>`;
+        });
+}
+
+// ==========================================
+// 4. LÓGICA DE ADMINISTRACIÓN LIGA LOCAL
+// ==========================================
 async function verificarPassword() {
     const pass = document.getElementById("admin-password").value;
     
     try {
-        // Enviamos la clave al nuevo endpoint /login en el main.py
         const response = await fetch('/login', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: pass })
         });
 
         if (response.ok) {
-            // Si el servidor responde 200 (OK), la clave es correcta
             document.getElementById("admin-login").style.display = "none";
             document.getElementById("admin-panel").style.display = "block";
-            
-            // Opcional: Guardamos en la memoria de la pestaña que estamos logueados
             sessionStorage.setItem("admin_session", "active");
+            
+            cargarFormularioAdminCartilla();
         } else {
-            // Si el servidor responde 401 u otro error
             alert("❌ Clave incorrecta. Acceso denegado.");
         }
     } catch (error) {
-        // Si hay un error de red o el servidor está caído
         console.error("Error en el login:", error);
         alert("❌ Error de conexión con el servidor.");
     }
 }
+
 function cerrarSesion() {
     document.getElementById("admin-login").style.display = "block";
     document.getElementById("admin-panel").style.display = "none";
     document.getElementById("admin-password").value = "";
-    
-    // Limpiamos la sesión
     sessionStorage.removeItem("admin_session");
 }
 
@@ -511,6 +560,78 @@ function guardarResultadoFaseFinal(ronda, index) {
     target.goles_l = gl === "" ? null : parseInt(gl);
     target.goles_v = gv === "" ? null : parseInt(gv);
     actualizarInterfaz();
+}
+
+// ==========================================
+// 4B. LOGICA DE ENTRADA EXCLUSIVA: FORMULARIO ADMIN CARTILLA
+// ==========================================
+function cargarFormularioAdminCartilla() {
+    const contenedor = document.getElementById("admin-cartilla-partidos");
+    if (!contenedor) return;
+
+    fetch("/api/cartilla-resultados")
+        .then(res => res.json())
+        .then(resultadosGuardados => {
+            contenedor.innerHTML = "";
+            
+            PARTIDOS_MUNDIAL.forEach((partido) => {
+                const [local, visita] = partido.split(" VS ");
+                const datosPartido = resultadosGuardados[partido] || { goles_local: "", goles_visita: "" };
+                
+                const div = document.createElement("div");
+                div.style = "display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);";
+                div.innerHTML = `
+                    <span style="font-size: 0.85rem; font-weight: bold; width: 40%; text-align: right;">${local}</span>
+                    <div style="display: flex; align-items: center; gap: 8px; justify-content: center; width: 20%;">
+                        <input type="number" class="admin-cartilla-gl" data-partido="${partido}" value="${datosPartido.goles_local !== null && datosPartido.goles_local !== undefined ? datosPartido.goles_local : ''}" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px;">
+                        <span style="font-size: 0.7rem; opacity: 0.5;">-</span>
+                        <input type="number" class="admin-cartilla-gv" data-partido="${partido}" value="${datosPartido.goles_visita !== null && datosPartido.goles_visita !== undefined ? datosPartido.goles_visita : ''}" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px;">
+                    </div>
+                    <span style="font-size: 0.85rem; font-weight: bold; width: 40%; text-align: left;">${visita}</span>
+                `;
+                contenedor.appendChild(div);
+            });
+        })
+        .catch(err => console.error("Error al cargar controles de cartilla:", err));
+}
+
+function guardarResultadosRealesCartilla() {
+    const inputsLocal = document.querySelectorAll(".admin-cartilla-gl");
+    const inputsVisita = document.querySelectorAll(".admin-cartilla-gv");
+    let payload = {};
+
+    inputsLocal.forEach((input, index) => {
+        const partido = input.getAttribute("data-partido");
+        const valLocal = input.value;
+        const valVisita = inputsVisita[index].value;
+
+        if (valLocal !== "" && valVisita !== "") {
+            payload[partido] = {
+                goles_local: parseInt(valLocal),
+                goles_visita: parseInt(valVisita)
+            };
+        } else {
+            payload[partido] = { goles_local: null, goles_visita: null };
+        }
+    });
+
+    fetch("/api/cartilla-guardar-resultados", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            alert("🔮 ¡Resultados reales del mundial guardados con éxito en el servidor!");
+            if (document.getElementById("cartilla").style.display === "block") {
+                cargarRankingCartilla();
+            }
+        } else {
+            alert("❌ Error al guardar marcadores del mundial.");
+        }
+    })
+    .catch(err => console.error("Error:", err));
 }
 
 // ==========================================
