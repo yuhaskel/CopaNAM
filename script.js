@@ -296,7 +296,7 @@ function cargarRankingCartilla() {
                     <td style="padding: 12px 8px; text-align: center; font-weight: bold; font-size: 1.1rem;">${pos}</td>
                     <td style="padding: 12px 8px; font-weight: bold; color: #fff;">${user.nombre.toUpperCase()}</td>
                     <td style="padding: 12px 8px; opacity: 0.85;">${user.curso}</td>
-                    <td style="padding: 12px 8px; text-align: center; font-weight: bold;">${user.exactos} 🎯</td>
+                    <td style="padding: 12px 8px; text-align: center; font-weight: bold;">${user.exactos}</td>
                     <td style="padding: 12px 8px; text-align: center; font-weight: bold; color: #ffd700; font-size: 1.15rem;">${user.puntos}</td>
                     <td style="padding: 12px 8px; text-align: center; font-style: italic; color: #60a5fa; font-weight: bold; letter-spacing: 0.5px;">${user.campeon.toUpperCase()}</td>
                 `;
