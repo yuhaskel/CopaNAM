@@ -692,6 +692,7 @@ function renderizarGraficoFavoritos(usuarios) {
 
     let conteo = {};
     usuarios.forEach(u => {
+        // MODIFICACIÓN: Tu main online envía la propiedad exactamente como "campeon"
         if (u.campeon) {
             const pais = u.campeon.toUpperCase().trim();
             if (pais !== "NO ELEGIDO" && pais !== "") {
@@ -730,7 +731,7 @@ function cargarPartidosMundialPublico() {
         .then(resultadosReales => {
             contenedor.innerHTML = "";
 
-            // Normalizador para ignorar tildes y espacios extras en las llaves del JSON
+            // Normalizador para ignorar tildes y diferencias de mayúsculas/espacios
             const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
 
             const mapaResultados = {};
