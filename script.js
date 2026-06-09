@@ -650,3 +650,37 @@ async function guardarCambiosServidor() {
         alert("❌ Error de conexión.");
     }
 }
+
+// ==========================================
+// 4C. LOGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA (¡ESTO FALTABA!)
+// ==========================================
+function cargarFormularioAdminCartilla() {
+    const contenedor = document.getElementById("admin-cartilla-partidos");
+    if (!contenedor) return;
+
+    // Vamos a buscar al servidor si ya hay marcadores reales guardados
+    fetch("/api/cartilla-resultados")
+        .then(res => res.json())
+        .then(resultadosGuardados => {
+            contenedor.innerHTML = "";
+            
+            // Recorremos el listado oficial de los 20 partidos para dibujarlos en pantalla
+            PARTIDOS_MUNDIAL.forEach((partido) => {
+                const [local, visita] = partido.split(" VS ");
+                const datosPartido = resultadosGuardados[partido] || { goles_local: "", goles_visita: "" };
+                
+                const div = document.createElement("div");
+                div.innerHTML = `
+                    <span>${local}</span>
+                    <div>
+                        <input type="number" class="admin-cartilla-gl" data-partido="${partido}" value="${datosPartido.goles_local !== null && datosPartido.goles_local !== undefined ? datosPartido.goles_local : ''}">
+                        <span style="font-size: 0.7rem; opacity: 0.5;">-</span>
+                        <input type="number" class="admin-cartilla-gv" data-partido="${partido}" value="${datosPartido.goles_visita !== null && datosPartido.goles_visita !== undefined ? datosPartido.goles_visita : ''}">
+                    </div>
+                    <span>${visita}</span>
+                `;
+                contenedor.appendChild(div);
+            });
+        })
+        .catch(err => console.error("Error al cargar controles de cartilla:", err));
+}
