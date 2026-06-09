@@ -266,7 +266,7 @@ function renderizarFaseFinal() {
 }
 
 // ==========================================
-// 3B. VISTA PÚBLICA EXCLUSIVA: CARTILLA MUNDIAL
+// 3B. VISTA PÚBLICA EXCLUSIVA: CARTILLA MUNDIAL (CORREGIDA)
 // ==========================================
 function cargarRankingCartilla() {
     const tbody = document.getElementById("tabla-cartilla-body");
@@ -278,10 +278,13 @@ function cargarRankingCartilla() {
         .then(res => res.json())
         .then(data => {
             tbody.innerHTML = "";
-            if (data.length === 0) {
+            if (!data || data.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Proximamente.</td></tr>`;
                 return;
             }
+
+            // 🔥 SE AGREGA LLAMADA CRÍTICA PARA RENDERIZAR GRÁFICO Y PARTIDOS DEL MUNDIAL
+            procesarYRenderizarContenidosMundial(data);
 
             data.forEach((user, idx) => {
                 const tr = document.createElement("tr");
@@ -292,13 +295,15 @@ function cargarRankingCartilla() {
                 else if (pos === 2) pos = "🥈";
                 else if (pos === 3) pos = "🥉";
 
+                const campeonTexto = user.campeon ? user.campeon.toUpperCase() : "NO ELEGIDO";
+
                 tr.innerHTML = `
                     <td style="padding: 12px 8px; text-align: center; font-weight: bold; font-size: 1.1rem;">${pos}</td>
                     <td style="padding: 12px 8px; font-weight: bold; color: #fff;">${user.nombre.toUpperCase()}</td>
                     <td style="padding: 12px 8px; opacity: 0.85;">${user.curso}</td>
                     <td style="padding: 12px 8px; text-align: center; font-weight: bold;">${user.exactos}</td>
                     <td style="padding: 12px 8px; text-align: center; font-weight: bold; color: #ffd700; font-size: 1.15rem;">${user.puntos}</td>
-                    <td style="padding: 12px 8px; text-align: center; font-style: italic; color: #60a5fa; font-weight: bold; letter-spacing: 0.5px;">${user.campeon.toUpperCase()}</td>
+                    <td style="padding: 12px 8px; text-align: center; font-style: italic; color: #60a5fa; font-weight: bold; letter-spacing: 0.5px;">${campeonTexto}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -562,7 +567,7 @@ function guardarResultadoFaseFinal(ronda, index) {
 }
 
 // ==========================================
-// 4B. LOGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA (DISEÑO PROFESIONAL REPARADO)
+// 4B. LÓGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA
 // ==========================================
 function cargarFormularioAdminCartilla() {
     const contenedor = document.getElementById("admin-cartilla-partidos");
@@ -574,7 +579,6 @@ function cargarFormularioAdminCartilla() {
             contenedor.innerHTML = "";
             
             PARTIDOS_MUNDIAL.forEach((partido) => {
-                // Separación inteligente tolerante a espacios alrededor del VS
                 const partes = partido.split(/\s*VS\s*/);
                 const local = partes[0];
                 const visita = partes[1];
@@ -584,7 +588,6 @@ function cargarFormularioAdminCartilla() {
                 const div = document.createElement("div");
                 div.className = "match-item"; 
                 
-                // Forzamos la estructura y la visualización de la tarjeta
                 div.style.display = "flex";
                 div.style.alignItems = "center";
                 div.style.justifyContent = "space-between";
@@ -667,4 +670,113 @@ async function guardarCambiosServidor() {
     } catch (e) {
         alert("❌ Error de conexión.");
     }
+}
+
+// ==========================================================================
+// 6. FUNCIONES AGREGADAS: GRÁFICO DE FAVORITOS Y PARTIDOS DEL MUNDIAL
+// ==========================================================================
+function procesarYRenderizarContenidosMundial(usuariosCartilla) {
+    renderizarGraficoFavoritos(usuariosCartilla);
+    cargarPartidosMundialPublico();
+}
+
+function renderizarGraficoFavoritos(usuarios) {
+    const contenedor = document.getElementById("mundial-grafico-container");
+    if (!contenedor) return;
+
+    const totalParticipantes = usuarios.length;
+    if (totalParticipantes === 0) {
+        contenedor.innerHTML = `<p style="text-align:center; opacity:0.5;">Sin datos de candidatos.</p>`;
+        return;
+    }
+
+    let conteo = {};
+    usuarios.forEach(u => {
+        if (u.campeon) {
+            const pais = u.campeon.toUpperCase().trim();
+            if (pais !== "NO ELEGIDO" && pais !== "") {
+                conteo[pais] = (conteo[pais] || 0) + 1;
+            }
+        }
+    });
+
+    const rankingCandidatos = Object.keys(conteo).map(pais => {
+        return {
+            nombre: pais,
+            votos: conteo[pais],
+            porcentaje: Math.round((conteo[pais] / totalParticipantes) * 100)
+        };
+    }).sort((a, b) => b.votos - a.votos);
+
+    contenedor.innerHTML = rankingCandidatos.map(c => `
+        <div style="font-size: 0.85rem; margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold;">
+                <span style="color: #fff;">${c.nombre} <span style="opacity: 0.6; font-weight: normal;">(${c.votos} ${c.votos === 1 ? 'voto' : 'votos'})</span></span>
+                <span style="color: #ffd700;">${c.porcentaje}%</span>
+            </div>
+            <div style="width: 100%; background: rgba(255,255,255,0.05); height: 10px; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02);">
+                <div style="width: ${c.porcentaje}%; background: linear-gradient(90deg, #ff4b5c, #ffd700); height: 100%; border-radius: 4px; transition: width 0.6s ease;"></div>
+            </div>
+        </div>
+    `).join("");
+}
+
+function cargarPartidosMundialPublico() {
+    const contenedor = document.getElementById("mundial-partidos-container");
+    if (!contenedor) return;
+
+    fetch("/api/cartilla-resultados")
+        .then(res => res.json())
+        .then(resultadosReales => {
+            contenedor.innerHTML = "";
+
+            // Normalizador para ignorar tildes y espacios extras en las llaves del JSON
+            const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+
+            const mapaResultados = {};
+            Object.keys(resultadosReales).forEach(key => {
+                mapaResultados[normalizar(key)] = resultadosReales[key];
+            });
+
+            PARTIDOS_MUNDIAL.forEach(partido => {
+                const partes = partido.split(/\s*VS\s*/);
+                const local = partes[0].trim();
+                const visita = partes[1].trim();
+                
+                const llaveNormalizada = normalizar(partido);
+                const datos = mapaResultados[llaveNormalizada];
+
+                const jugo = datos && datos.goles_local !== null && datos.goles_local !== undefined && datos.goles_visita !== null && datos.goles_visita !== undefined;
+                
+                const marcadorTexto = jugo ? `${datos.goles_local} - ${datos.goles_visita}` : "VS";
+                const estiloScoreBox = jugo ? "color: #ffd700; font-weight: 900; background: rgba(255, 215, 0, 0.1);" : "opacity: 0.5; background: rgba(0,0,0,0.2);";
+
+                const div = document.createElement("div");
+                div.className = "match-item";
+                div.style.display = "flex";
+                div.style.alignItems = "center";
+                div.style.justifyContent = "space-between";
+                div.style.background = "rgba(255, 255, 255, 0.02)";
+                div.style.border = "1px solid rgba(255, 255, 255, 0.04)";
+                div.style.padding = "8px 12px";
+                div.style.borderRadius = "6px";
+
+                div.innerHTML = `
+                    <div style="text-align: right; width: 38%; font-weight: bold; color: #fff; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${local}
+                    </div>
+                    <div class="score-box" style="width: 24%; min-width: 65px; text-align: center; font-size: 0.85rem; padding: 4px; border-radius: 4px; margin: 0 10px; ${estiloScoreBox}">
+                        ${marcadorTexto}
+                    </div>
+                    <div style="text-align: left; width: 38%; font-weight: bold; color: #fff; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${visita}
+                    </div>
+                `;
+                contenedor.appendChild(div);
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            contenedor.innerHTML = `<p style="text-align:center; color:#ef4444; font-size:0.8rem;">No se pudieron cargar los encuentros.</p>`;
+        });
 }

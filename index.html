@@ -43,6 +43,31 @@
 
         <!-- SECCIÓN PÚBLICA DE LA CARTILLA INTEGRADA AL ESTILO ORIGINAL -->
         <section id="cartilla" class="tab-content">
+            
+            <!-- CONTENEDOR INTERMEDIO: PARTIDOS Y GRÁFICO DE FAVORITOS -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                
+                <!-- Columna Izquierda: Resultados Partidos del Mundial -->
+                <div class="card" style="margin-bottom: 0;">
+                    <h2>⚽ Partidos del Mundial</h2>
+                    <p style="text-align: center; opacity: 0.7; font-size: 0.8rem; margin-bottom: 15px;">Marcadores en tiempo real según el panel de administración</p>
+                    <div id="mundial-partidos-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; padding-right: 5px;">
+                        <!-- Cargado dinámicamente por JS -->
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Gráfico de Favoritos (Campeón) -->
+                <div class="card" style="margin-bottom: 0;">
+                    <h2>📊 Tendencia: ¿Quién será Campeón?</h2>
+                    <p style="text-align: center; opacity: 0.7; font-size: 0.8rem; margin-bottom: 15px;">Porcentaje de veces elegido por los participantes</p>
+                    <div id="mundial-grafico-container" style="display: flex; flex-direction: column; gap: 12px; max-height: 280px; overflow-y: auto; padding-right: 5px;">
+                        <!-- Cargado dinámicamente por JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TABLA DE POSICIONES ORIGINAL -->
             <div class="card">
                 <h2>📝 TABLA DE POSICIONES</h2>
                 <p style="text-align: center; opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px; font-weight: 700;">
