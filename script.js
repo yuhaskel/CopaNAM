@@ -272,34 +272,37 @@ function cargarRankingCartilla() {
     const tbody = document.getElementById("tabla-cartilla-body");
     if (!tbody) return;
 
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Calculando puntajes en vivo desde /pronosticos...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Calculando puntajes en vivo...</td></tr>`;
 
-    // Realizamos la llamada al backend que devuelve el JSON estructurado de marcadores reales
     fetch("/api/ranking-cartilla")
         .then(res => res.json())
         .then(data => {
             tbody.innerHTML = "";
             
-            // Si el backend devuelve un array procesado (caso ideal) lo usamos directamente
-            if (Array.isArray(data)) {
-                if (data.length === 0) {
+            // Recibimos el super paquete de main.py
+            if (data && data.ranking) {
+                const usuarios = data.ranking;
+                const marcadores = data.reales;
+
+                // 1. Pintar Tabla
+                if (usuarios.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Proximamente.</td></tr>`;
-                    return;
+                } else {
+                    renderizarFilasTablaPuntajes(usuarios, tbody);
                 }
-                procesarYRenderizarContenidosMundial(data);
-                renderizarFilasTablaPuntajes(data, tbody);
+
+                // 2. Pintar Gráfico y Partidos directamente sin hacer otro fetch
+                renderizarGraficoFavoritos(usuarios);
+                cargarPartidosConEstructuraInterna(marcadores);
             } else {
-                // Si el backend sufre el error y devuelve los partidos reales crudos, cargamos dinámicamente las cartillas
-                // asegurando la estabilidad completa del frontend en Render
-                cargarRankingFallbackDinamico(data, tbody);
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.7; padding: 25px;">Visualización de Marcadores Activa.</td></tr>`;
             }
         })
         .catch(err => {
             console.error(err);
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding: 25px;">Error al computar los datos de las cartillas.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding: 25px;">Error al computar los datos.</td></tr>`;
         });
 }
-
 function cargarRankingFallbackDinamico(resultadosReales, tbody) {
     // Renderizamos los partidos y el gráfico de forma segura
     cargarPartidosConEstructuraInterna(resultadosReales);
