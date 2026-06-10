@@ -703,7 +703,12 @@ function procesarYRenderizarContenidosMundial(usuariosCartilla) {
 
 function renderizarGraficoFavoritos(usuarios) {
     const contenedor = document.getElementById("mundial-grafico-container");
-    if (!contenedor) return;
+    
+    // Si el contenedor no existe en el HTML, se detiene para no dar error
+    if (!contenedor) {
+        console.error("Falta el contenedor del gráfico en el HTML");
+        return;
+    }
 
     const totalParticipantes = usuarios.length;
     if (totalParticipantes === 0) {
@@ -712,9 +717,13 @@ function renderizarGraficoFavoritos(usuarios) {
     }
 
     let conteo = {};
+    
     usuarios.forEach(u => {
-        if (u.campeon) {
-            const pais = u.campeon.toUpperCase().trim();
+        // FALLBACK A PRUEBA DE BALAS: Atrapa el dato sin importar cómo lo envíe el main.py
+        const campeonStr = u.campeon || u.campeon_del_mundo;
+        
+        if (campeonStr) {
+            const pais = campeonStr.toUpperCase().trim();
             if (pais !== "NO ELEGIDO" && pais !== "") {
                 conteo[pais] = (conteo[pais] || 0) + 1;
             }
@@ -729,6 +738,12 @@ function renderizarGraficoFavoritos(usuarios) {
         };
     }).sort((a, b) => b.votos - a.votos);
 
+    // Si nadie ha elegido campeón, muestra un mensaje
+    if (rankingCandidatos.length === 0) {
+        contenedor.innerHTML = `<p style="text-align:center; opacity:0.5; margin-top:15px;">Nadie ha elegido un campeón válido aún.</p>`;
+        return;
+    }
+
     contenedor.innerHTML = rankingCandidatos.map(c => `
         <div style="font-size: 0.85rem; margin-bottom: 8px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold;">
@@ -741,7 +756,6 @@ function renderizarGraficoFavoritos(usuarios) {
         </div>
     `).join("");
 }
-
 function cargarPartidosConEstructuraInterna(resultadosEstaticos) {
     const contenedor = document.getElementById("mundial-partidos-container");
     if (!contenedor) return;
