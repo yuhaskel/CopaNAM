@@ -3,6 +3,7 @@
 // ==========================================
 let torneoData = null;
 
+// LISTA OFICIAL Y CORREGIDA DE LOS 20 PARTIDOS
 const PARTIDOS_MUNDIAL = [
     "México VS Sudáfrica", "Brasil VS Marruecos", "Países Bajos VS Japón", "Costa de Marfil VS Ecuador",
     "Francia VS Senegal", "Argelia VS Argentina", "Inglaterra VS Croacia", "México VS Corea del Sur",
@@ -15,15 +16,28 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarTorneo();
 });
 
-// Función central de carga de datos
+function formatearFechaEspanol(fechaStr) {
+    if (!fechaStr) return "";
+    const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    
+    const partes = fechaStr.split("-");
+    const fecha = new Date(partes[0], partes[1] - 1, partes[2]);
+    
+    const nombreDia = dias[fecha.getDay()];
+    const diaNum = fecha.getDate();
+    const mesNombre = meses[fecha.getMonth()];
+    const anio = fecha.getFullYear();
+    
+    return `${nombreDia}, ${diaNum} de ${mesNombre} de ${anio}`;
+}
+
 async function cargarTorneo() {
     try {
         const response = await fetch('/torneo_data.json'); 
         if (!response.ok) throw new Error("Error al obtener datos");
         torneoData = await response.json();
         actualizarInterfaz();
-        // Disparamos la carga de la cartilla aquí también para asegurar visualización
-        cargarRankingCartilla();
     } catch (error) {
         console.error("Fallo al cargar:", error);
     }
@@ -31,10 +45,14 @@ async function cargarTorneo() {
 
 function actualizarInterfaz() {
     if (!torneoData) return;
+
+    // Vistas Públicas
     renderizarPosiciones();
     renderizarResultadosYProximos();
     renderizarGoleadores();
     renderizarFaseFinal();
+    
+    // Vistas de Administración
     llenarSelectsEquipos();
     renderizarAdminEquipos(); 
     renderizarAdminGoleadores();
@@ -252,28 +270,38 @@ function renderizarFaseFinal() {
 // ==========================================
 function cargarRankingCartilla() {
     const tbody = document.getElementById("tabla-cartilla-body");
-    // No salimos si no hay tbody, solo intentamos cargar lo demás
-    
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Calculando puntajes en vivo...</td></tr>`;
+
     fetch("/api/ranking-cartilla")
         .then(res => res.json())
         .then(data => {
-            // Renderizamos gráfico y partidos sin importar la pestaña
+            tbody.innerHTML = "";
+            
+            // Recibimos el super paquete de main.py
             if (data && data.ranking) {
-                renderizarGraficoFavoritos(data.ranking);
-                cargarPartidosConEstructuraInterna(data.reales);
-                
-                // Solo pintamos la tabla si el elemento existe
-                if (tbody) {
-                    tbody.innerHTML = "";
-                    if (data.ranking.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Próximamente...</td></tr>`;
-                    } else {
-                        renderizarFilasTablaPuntajes(data.ranking, tbody);
-                    }
+                const usuarios = data.ranking;
+                const marcadores = data.reales;
+
+                // 1. Pintar Tabla
+                if (usuarios.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Proximamente.</td></tr>`;
+                } else {
+                    renderizarFilasTablaPuntajes(usuarios, tbody);
                 }
+
+                // 2. Pintar Gráfico y Partidos directamente sin hacer otro fetch
+                renderizarGraficoFavoritos(usuarios);
+                cargarPartidosConEstructuraInterna(marcadores);
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.7; padding: 25px;">Visualización de Marcadores Activa.</td></tr>`;
             }
         })
-        .catch(err => console.error("Error cargando cartilla:", err));
+        .catch(err => {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding: 25px;">Error al computar los datos.</td></tr>`;
+        });
 }
 function cargarRankingFallbackDinamico(resultadosReales, tbody) {
     // Renderizamos los partidos y el gráfico de forma segura
@@ -675,31 +703,55 @@ function procesarYRenderizarContenidosMundial(usuariosCartilla) {
 
 function renderizarGraficoFavoritos(usuarios) {
     const contenedor = document.getElementById("mundial-grafico-container");
-    if (!contenedor) return;
+    
+    // Si el contenedor no existe en el HTML, se detiene para no dar error
+    if (!contenedor) {
+        console.error("Falta el contenedor del gráfico en el HTML");
+        return;
+    }
+
+    const totalParticipantes = usuarios.length;
+    if (totalParticipantes === 0) {
+        contenedor.innerHTML = `<p style="text-align:center; opacity:0.5;">Sin datos de candidatos.</p>`;
+        return;
+    }
 
     let conteo = {};
+    
     usuarios.forEach(u => {
-        const nombreCampeon = u.campeon || u.campeon_del_mundo;
-        if (nombreCampeon && nombreCampeon !== "No elegido") {
-            const pais = nombreCampeon.toUpperCase().trim();
-            conteo[pais] = (conteo[pais] || 0) + 1;
+        // FALLBACK A PRUEBA DE BALAS: Atrapa el dato sin importar cómo lo envíe el main.py
+        const campeonStr = u.campeon || u.campeon_del_mundo;
+        
+        if (campeonStr) {
+            const pais = campeonStr.toUpperCase().trim();
+            if (pais !== "NO ELEGIDO" && pais !== "") {
+                conteo[pais] = (conteo[pais] || 0) + 1;
+            }
         }
     });
 
-    const total = usuarios.length;
-    const ranking = Object.keys(conteo).map(p => ({
-        nombre: p,
-        votos: conteo[p],
-        porcentaje: Math.round((conteo[p] / total) * 100)
-    })).sort((a, b) => b.votos - a.votos);
+    const rankingCandidatos = Object.keys(conteo).map(pais => {
+        return {
+            nombre: pais,
+            votos: conteo[pais],
+            porcentaje: Math.round((conteo[pais] / totalParticipantes) * 100)
+        };
+    }).sort((a, b) => b.votos - a.votos);
 
-    contenedor.innerHTML = ranking.map(c => `
-        <div style="font-size: 0.85rem; margin-bottom: 10px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                <strong>${c.nombre}</strong> <span>${c.porcentaje}%</span>
+    // Si nadie ha elegido campeón, muestra un mensaje
+    if (rankingCandidatos.length === 0) {
+        contenedor.innerHTML = `<p style="text-align:center; opacity:0.5; margin-top:15px;">Nadie ha elegido un campeón válido aún.</p>`;
+        return;
+    }
+
+    contenedor.innerHTML = rankingCandidatos.map(c => `
+        <div style="font-size: 0.85rem; margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold;">
+                <span style="color: #fff;">${c.nombre} <span style="opacity: 0.6; font-weight: normal;">(${c.votos} ${c.votos === 1 ? 'voto' : 'votos'})</span></span>
+                <span style="color: #ffd700;">${c.porcentaje}%</span>
             </div>
-            <div style="width: 100%; background: #333; height: 8px; border-radius: 4px;">
-                <div style="width: ${c.porcentaje}%; background: #ffd700; height: 100%; border-radius: 4px;"></div>
+            <div style="width: 100%; background: rgba(255,255,255,0.05); height: 10px; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02);">
+                <div style="width: ${c.porcentaje}%; background: linear-gradient(90deg, #ff4b5c, #ffd700); height: 100%; border-radius: 4px; transition: width 0.6s ease;"></div>
             </div>
         </div>
     `).join("");
