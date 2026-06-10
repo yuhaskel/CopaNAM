@@ -181,10 +181,12 @@ async def obtener_ranking():
                             "exactos": exactos
                         })  
         ranking.sort(key=lambda x: (x["puntos"], x["exactos"]), reverse=True)
-        return ranking
+        
+        # 👇 ESTA ES LA LÍNEA CLAVE QUE DEBES CAMBIAR 👇
+        return {"ranking": ranking, "reales": reales} 
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 # --- ENLACE DIRECTO DE CARGA MASIVA (SIN CONTRASEÑA) ---
 @app.post("/api/admin/subir-mis-json-locales")
 async def subir_mis_json_locales(files: list[UploadFile] = File(...)):
