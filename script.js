@@ -325,6 +325,13 @@ function renderizarFilasTablaPuntajes(listaUsuarios, tbody) {
         if (pos === 1) pos = "🥇";
         else if (pos === 2) pos = "🥈";
         else if (pos === 3) pos = "🥉";
+        else if (pos === 4) pos = "4️⃣";
+        else if (pos === 5) pos = "5️⃣";
+        else if (pos === 6) pos = "6️⃣";
+        else if (pos === 7) pos = "7️⃣";
+        else if (pos === 8) pos = "8️⃣";
+        else if (pos === 9) pos = "9️⃣";
+        else if (pos === 10) pos = "🔟";
 
         const campeonTexto = user.campeon ? user.campeon.toUpperCase() : "NO ELEGIDO";
 
