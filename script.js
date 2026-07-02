@@ -3,13 +3,9 @@
 // ==========================================
 let torneoData = null;
 
-// NUEVO: Detectar la rama desde la URL (?rama=femenina o ?rama=masculina)
+// 👇 NUEVO: Detectar la rama desde la URL (?rama=femenina o ?rama=masculina)
 const urlParams = new URLSearchParams(window.location.search);
 const ramaActual = urlParams.get('rama') || 'masculina'; 
-
-// LISTA OFICIAL Y CORREGIDA DE LOS 20 PARTIDOS
-const PARTIDOS_MUNDIAL = [
-// ... (El resto de tu script.js se mantiene idéntico)
 
 // LISTA OFICIAL Y CORREGIDA DE LOS 20 PARTIDOS
 const PARTIDOS_MUNDIAL = [
@@ -21,6 +17,8 @@ const PARTIDOS_MUNDIAL = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
+    document.body.classList.add(`theme-${ramaActual}`);
+    
     cargarTorneo();
 });
 
@@ -42,7 +40,8 @@ function formatearFechaEspanol(fechaStr) {
 
 async function cargarTorneo() {
     try {
-        const response = await fetch('/torneo_data.json'); 
+        // 👇 MODIFICADO: Ahora añade dinámicamente la rama (?rama=masculina o ?rama=femenina)
+        const response = await fetch(`/torneo_data.json?rama=${ramaActual}`); 
         if (!response.ok) throw new Error("Error al obtener datos");
         torneoData = await response.json();
         actualizarInterfaz();
@@ -701,18 +700,23 @@ function guardarResultadosRealesCartilla() {
 // ==========================================
 async function guardarCambiosServidor() {
     try {
-        const response = await fetch('/guardar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        // 👇 MODIFICADO: Ahora le avisa al backend en qué rama se deben guardar los cambios
+        const response = await fetch(`/api/guardar?rama=${ramaActual}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(torneoData)
         });
-        if (response.ok) alert("✅ ¡Guardado con éxito!");
-        else alert("❌ Error al guardar.");
-    } catch (e) {
-        alert("❌ Error de conexión.");
+        
+        const res = await response.json();
+        if (res.status === "success") {
+            alert("¡Cambios guardados con éxito en el servidor!");
+        } else {
+            alert("Error: " + res.message);
+        }
+    } catch (error) {
+        alert("Error de conexión al guardar.");
     }
 }
-
 // ==========================================================================
 // 6. FUNCIONES AGREGADAS: GRÁFICO DE FAVORITOS Y PARTIDOS DEL MUNDIAL
 // ==========================================================================
