@@ -32,13 +32,18 @@ RESULTADOS_CARTILLA_FILE = os.path.join(PERSISTENT_DIR, "cartilla_resultados.jso
 # Función auxiliar para garantizar estructura base en archivos nuevos o vacíos
 def garantizar_estructura_base(ruta_archivo):
     if not os.path.exists(ruta_archivo) or os.path.getsize(ruta_archivo) == 0:
+        # Estructura con los partidos base inicializados como TBD para que el JS los dibuje
+        partido_base = {"local": "TBD", "visitante": "TBD", "goles_l": None, "goles_v": None}
+        
         plantilla_vacia = {
             "equipos": {},
             "partidos": [],
             "goleadores": [],
             "fase_final": {
-                "cuartos_ida": [], "cuartos_vuelta": [],
-                "semifinal_ida": [], "semifinal_vuelta": [],
+                "cuartos_ida": [partido_base.copy() for _ in range(4)],
+                "cuartos_vuelta": [partido_base.copy() for _ in range(4)],
+                "semifinal_ida": [partido_base.copy() for _ in range(2)],
+                "semifinal_vuelta": [partido_base.copy() for _ in range(2)],
                 "tercer_lugar": {"local": "TBD", "visitante": "TBD", "goles_l": None, "goles_v": None},
                 "final": {"local": "TBD", "visitante": "TBD", "goles_l": None, "goles_v": None}
             }
