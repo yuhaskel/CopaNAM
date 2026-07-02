@@ -201,5 +201,10 @@ async def subir_mis_json_locales(files: list[UploadFile] = File(...)):
                 shutil.copyfileobj(file.file, buffer)
             subidos += 1
     return {"status": "success", "mensaje": f"Se guardaron {subidos} cartillas."}
+    
+@app.get("/")
+async def home():
+    """Entrega el index.html automáticamente al acceder al dominio principal"""
+    return FileResponse("index.html")
 
 app.mount("/", StaticFiles(directory="./"), name="static")
