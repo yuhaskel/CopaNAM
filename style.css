@@ -601,3 +601,125 @@ body.theme-femenina .btn-cartilla:hover {
     box-shadow: 0 0 25px rgba(255, 0, 127, 0.8) !important;
     transform: scale(1.02);
 }
+/* ==========================================================================
+   TEMA OFICIAL NEÓN - RAMA FEMENINA 💜💖💚
+   (Adaptado de style femenina.css)
+   ========================================================================== */
+
+/* 1. Fondo del Sitio y Overlay Radial Profundo */
+body.theme-femenina {
+    background-color: #0b001a !important;
+    color: white !important;
+}
+
+body.theme-femenina .background-overlay,
+body.theme-femenina::before {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top, #36004d 0%, #0b001a 100%) !important;
+    z-index: -1;
+    content: "";
+    display: block;
+}
+
+/* 2. Textos de Acento e Identidad */
+body.theme-femenina .txt-blue { color: #00f0ff !important; }
+body.theme-femenina .txt-red { color: #ff007f !important; }
+body.theme-femenina .txt-gold { color: #00ffaa !important; font-weight: bold !important; }
+
+/* 3. Menú de Pestañas (Tabs Navigation) */
+body.theme-femenina .tab-link {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme-femenina .tab-link:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+}
+
+body.theme-femenina .tab-link.active {
+    background: #ff007f !important;
+    color: white !important;
+    border-color: #ff007f !important;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.5) !important;
+}
+
+/* 4. Tarjetas y Contenedores */
+body.theme-femenina .card,
+body.theme-femenina .tabla-contenedor {
+    background: rgba(25, 0, 50, 0.4) !important;
+    border: 1px solid rgba(255, 0, 127, 0.15) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+/* 5. Cabeceras y Filas de Tablas */
+body.theme-femenina th,
+body.theme-femenina .header-grid {
+    color: rgba(255, 255, 255, 0.5) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
+    background-color: transparent !important;
+}
+
+body.theme-femenina tr:hover {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+body.theme-femenina td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02) !important;
+    color: white !important;
+}
+
+/* Forzar color fucsia en los números de puntos (PTS) */
+body.theme-femenina td:last-child {
+    color: #ff007f !important;
+    font-weight: bold !important;
+}
+
+/* 6. Scrollbars Responsivas en Color Verde Menta */
+body.theme-femenina .table-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 170, 0.3) !important;
+}
+
+/* 7. Tarjeta Especial de Goleadora Destacada (Efecto Menta/Dorado) */
+body.theme-femenina .top-scorer-card {
+    background: linear-gradient(90deg, rgba(0, 255, 170, 0.2) 0%, rgba(25, 0, 50, 0.9) 100%) !important;
+    border: 2px solid #00ffaa !important;
+    box-shadow: 0 0 15px rgba(0, 255, 170, 0.2) !important;
+}
+
+body.theme-femenina .top-scorer-name {
+    color: #00ffaa !important;
+    text-shadow: 0 0 8px rgba(0, 255, 170, 0.5) !important;
+}
+
+/* 8. Banner de la Cartilla Mundial (Estilo Púrpura/Fucsia) */
+body.theme-femenina .banner-cartilla {
+    background: linear-gradient(135deg, #1f0033 0%, #4d003b 100%) !important;
+    border: 1.5px solid #ff007f !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.theme-femenina .badge-nuevo {
+    background-color: #ef4444 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+}
+
+body.theme-femenina .btn-banner,
+body.theme-femenina .btn-cartilla {
+    background-color: #ff007f !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(255, 0, 127, 0.3) !important;
+    border: none !important;
+}
+
+body.theme-femenina .btn-banner:hover,
+body.theme-femenina .btn-cartilla:hover {
+    background-color: #ff3399 !important;
+    box-shadow: 0 6px 16px rgba(255, 0, 127, 0.5) !important;
+}
