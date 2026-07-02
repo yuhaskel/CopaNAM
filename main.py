@@ -119,17 +119,21 @@ async def obtener_datos(rama: str = "masculina"):
         return FileResponse(DATA_FILE_MASCULINA)
 
 @app.post("/guardar")
-async def guardar_datos(request: Request, rama: str = "masculina"):
+async def guardar_datos(request: Request):
     """Escribe las configuraciones en el casillero correspondiente sin pisar la otra rama"""
     try:
+        # Extrae el parámetro ?rama= de la URL de forma segura
+        rama = request.query_params.get("rama", "masculina")
         data = await request.json()
+        
         archivo_destino = DATA_FILE_FEMENINA if rama == "femenina" else DATA_FILE_MASCULINA
+        
         with open(archivo_destino, "w", encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
-        return {"status": "success"}
+            
+        return {"status": "success", "rama_guardada": rama}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
 # --- ENDPOINTS DE LOGOS (COMPARTIDOS Y ACCESIBLES) ---
 
 @app.post("/upload_logo")
