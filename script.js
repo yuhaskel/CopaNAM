@@ -701,16 +701,16 @@ function guardarResultadosRealesCartilla() {
 // ==========================================
 async function guardarCambiosServidor() {
     try {
-        // 👇 MODIFICADO: Ahora le avisa explícitamente a Python sobre qué rama emite el guardado (?rama=femenina)
+        //  Corregido: Se eliminó /api para apuntar directamente al endpoint real del backend
         const response = await fetch(`/guardar?rama=${ramaActual}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(torneoData)
         });
-        if (response.ok) alert("✅ ¡Guardado con éxito!");
+        if (response.ok) alert("✅ ¡Cambios guardados con éxito en el servidor!");
         else alert("❌ Error al guardar.");
-    } catch (e) {
-        alert("❌ Error de conexión.");
+    } catch (error) {
+        alert("❌ Error de conexión al guardar: " + error);
     }
 }
 // ==========================================================================
