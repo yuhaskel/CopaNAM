@@ -31,7 +31,7 @@
     .side-femenina {
         background: linear-gradient(135deg, #1f0b2a 0%, #000214 100%);
         border-right: 1px solid rgba(255, 255, 255, 0.05);
-        cursor: not-allowed; /* Cambio visual a bloqueado */
+        cursor: pointer; /* LIBERADO: Cambiado de 'not-allowed' a manito de clic */
     }
     .side-femenina:hover {
         background: linear-gradient(135deg, #42105c 0%, #000214 100%);
@@ -156,13 +156,13 @@
 </head>
 <body>
     <div class="welcome-container">
-        <!-- Lado Femenino: Bloqueado por JS con un alert -->
-        <a href="#" class="branch-side side-femenina" onclick="alert('Segundo semestre 2026'); return false;">
+        <!-- Lado Femenino: Enrutado directamente a la rama femenina -->
+        <a href="liga.html?rama=femenina" class="branch-side side-femenina">
             <h1 class="logo-title">
                 <span class="txt-hashtag">#</span><span class="txt-celeste-neon">N</span><span class="txt-rosado-neon">A</span><span style="color: #ffffff;">MLEAGUE</span>
             </h1>
             <span class="branch-title">Femenina</span>
-            <span class="branch-title" style="font-size: 0.9rem; opacity: 0.4; letter-spacing: 2px; margin-top: 0;">Próximamente</span>
+            <span class="branch-title" style="font-size: 0.9rem; color: #ff33ff; text-shadow: 0 0 10px rgba(255,51,255,0.6); letter-spacing: 2px; margin-top: 5px;">¡YA DISPONIBLE!</span>
         </a>
 
         <!-- Lado Masculino: Direcciona directo a la liga actual -->
