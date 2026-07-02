@@ -518,3 +518,86 @@ hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 
         min-width: 650px;
     }
 }
+
+/* ==========================================
+   TEMA NEÓN PREMIER - RAMA FEMENINA 💜💖
+   ========================================== */
+
+/* 1. Fondo del sitio completo con degradado radial profundo */
+body.theme-femenina {
+    background: radial-gradient(circle at top, #140526 0%, #05010a 100%) !important;
+    color: #ffffff !important;
+}
+
+/* 2. Barra de pestañas y botones de navegación */
+body.theme-femenina .tabs-nav {
+    border-bottom: 1px solid rgba(255, 0, 127, 0.2) !important;
+}
+
+body.theme-femenina .tab-link {
+    color: rgba(255, 255, 255, 0.6) !important;
+    background: rgba(255, 0, 127, 0.03) !important;
+    border: 1px solid rgba(255, 0, 127, 0.1) !important;
+}
+
+body.theme-femenina .tab-link:hover {
+    color: #ff007f !important;
+    border-color: rgba(255, 0, 127, 0.5) !important;
+    box-shadow: 0 0 10px rgba(255, 0, 127, 0.2) !important;
+}
+
+body.theme-femenina .tab-link.active {
+    background: #ff007f !important;
+    color: #ffffff !important;
+    border-color: #ff007f !important;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.6) !important;
+}
+
+/* 3. Tarjetas, Banner de Cartilla y Contenedores */
+body.theme-femenina .card,
+body.theme-femenina .banner-cartilla,
+body.theme-femenina .tabla-contenedor {
+    background: rgba(15, 5, 28, 0.75) !important;
+    border: 1px solid rgba(255, 0, 127, 0.25) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 127, 0.08) !important;
+    backdrop-filter: blur(10px);
+}
+
+/* 4. Estilos de las Tablas (Legibilidad Máxima) */
+body.theme-femenina table {
+    color: #ffffff !important;
+}
+
+body.theme-femenina th {
+    background: #250a45 !important;
+    color: #ff007f !important;
+    border-bottom: 2px solid #ff007f !important;
+    font-weight: bold !important;
+}
+
+body.theme-femenina td {
+    border-bottom: 1px solid rgba(255, 0, 127, 0.1) !important;
+    color: #e0d5f0 !important; /* Blanco ligeramente lila para los datos */
+}
+
+/* Resaltar los números de puntos (PTS) en fucsia/rosado neón */
+body.theme-femenina td:last-child, 
+body.theme-femenina .pts-highlight {
+    color: #ff007f !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 8px rgba(255, 0, 127, 0.4);
+}
+
+/* 5. El Botón Central de la Cartilla */
+body.theme-femenina .btn-cartilla {
+    background: linear-gradient(135px, #ff007f 0%, #8b00ff 100%) !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.5) !important;
+    border: none !important;
+}
+
+body.theme-femenina .btn-cartilla:hover {
+    box-shadow: 0 0 25px rgba(255, 0, 127, 0.8) !important;
+    transform: scale(1.02);
+}
