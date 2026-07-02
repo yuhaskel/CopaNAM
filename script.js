@@ -361,7 +361,7 @@ async function verificarPassword() {
     const pass = document.getElementById("admin-password").value;
     
     try {
-        const response = await fetch('/login', {
+        const response = await fetch(`/login?rama=${ramaActual}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: pass })
