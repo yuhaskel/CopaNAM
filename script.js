@@ -361,7 +361,8 @@ async function verificarPassword() {
     const pass = document.getElementById("admin-password").value;
     
     try {
-        const response = await fetch(`/login?rama=${ramaActual}`, {
+        // Envia el login de forma limpia al endpoint restablecido de Python
+        const response = await fetch('/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: pass })
@@ -700,21 +701,16 @@ function guardarResultadosRealesCartilla() {
 // ==========================================
 async function guardarCambiosServidor() {
     try {
-        // 👇 MODIFICADO: Ahora le avisa al backend en qué rama se deben guardar los cambios
-        const response = await fetch(`/api/guardar?rama=${ramaActual}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        // 👇 MODIFICADO: Ahora le avisa explícitamente a Python sobre qué rama emite el guardado (?rama=femenina)
+        const response = await fetch(`/guardar?rama=${ramaActual}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(torneoData)
         });
-        
-        const res = await response.json();
-        if (res.status === "success") {
-            alert("¡Cambios guardados con éxito en el servidor!");
-        } else {
-            alert("Error: " + res.message);
-        }
-    } catch (error) {
-        alert("Error de conexión al guardar.");
+        if (response.ok) alert("✅ ¡Guardado con éxito!");
+        else alert("❌ Error al guardar.");
+    } catch (e) {
+        alert("❌ Error de conexión.");
     }
 }
 // ==========================================================================
