@@ -515,15 +515,14 @@ hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 
         min-width: 650px;
     }
 }
-
 /* ==========================================================================
    TEMA DEFINITIVO PREMIUM - RAMA FEMENINA 💜💖💚
-   (Activa automáticamente neones al leer la variable de JS)
+   (Ajustado exactamente a la paleta de la captura: Fondo Magenta y Logos Neón)
    ========================================================================== */
 
-/* 1. Fondo Estilo Domo Cyberpunk (Violeta Eléctrico Profundo) */
+/* 1. Fondo Rosado / Magenta Profundo Cyberpunk */
 body.theme-femenina {
-    background-color: #0b001a !important;
+    background-color: #0b0015 !important;
     color: #ffffff !important;
 }
 
@@ -534,95 +533,105 @@ body.theme-femenina::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at top, #36004d 0%, #0b001a 100%) !important;
+    /* Cambiado de violeta a degradado radial con centro magenta/fucsia quemado */
+    background: radial-gradient(circle at top, #4a002a 0%, #0b0015 100%) !important;
     z-index: -1;
     content: "";
     display: block;
 }
 
-/* 2. Interruptor de Textos de Identidad (#, Letras Destacadas) */
-body.theme-femenina .txt-blue { color: #00f0ff !important; }
-body.theme-femenina .txt-red { color: #ff007f !important; }
-body.theme-femenina .txt-gold { color: #00ffaa !important; font-weight: bold !important; }
+/* 2. Interruptor de Textos de Identidad (N Celeste y A Rosada) */
+body.theme-femenina .txt-blue { 
+    color: #6efff8 !important; /* Celeste Neón */
+    text-shadow: 0 0 10px rgba(110, 255, 248, 0.5);
+}
+body.theme-femenina .txt-red { 
+    color: #ff33ff !important; /* Rosado / Fucsia Neón */
+    text-shadow: 0 0 10px rgba(255, 51, 255, 0.5);
+}
+body.theme-femenina .txt-gold { 
+    color: #00ffaa !important; 
+    font-weight: bold !important; 
+}
 
-/* 3. Menú de Pestañas e Indicador Activo (Fucsia Neón) */
+/* 3. Menú de Pestañas e Indicador Activo (Fucsia/Rosado Encendido) */
 body.theme-femenina .tabs-nav {
-    border-bottom: 1px solid rgba(255, 0, 127, 0.2) !important;
+    border-bottom: 1px solid rgba(255, 51, 255, 0.2) !important;
 }
 
 body.theme-femenina .tab-link {
-    background: rgba(25, 0, 50, 0.4) !important;
-    border: 1px solid rgba(255, 0, 127, 0.15) !important;
+    background: rgba(35, 0, 20, 0.4) !important;
+    border: 1px solid rgba(255, 51, 255, 0.15) !important;
     color: rgba(255, 255, 255, 0.6) !important;
 }
 
 body.theme-femenina .tab-link:hover {
-    background: rgba(255, 0, 127, 0.1) !important;
+    background: rgba(255, 51, 255, 0.1) !important;
     color: #ffffff !important;
-    border-color: rgba(255, 0, 127, 0.4) !important;
+    border-color: rgba(255, 51, 255, 0.4) !important;
 }
 
 body.theme-femenina .tab-link.active {
-    background: #ff007f !important;
+    background: #ff33ff !important; /* Color rosado vibrante de la pestaña */
     color: #ffffff !important;
-    border-bottom: 3px solid #ff007f !important;
-    border-color: #ff007f !important;
-    box-shadow: 0 0 15px rgba(255, 0, 127, 0.6) !important;
+    border-bottom: 3px solid #ff33ff !important;
+    border-color: #ff33ff !important;
+    box-shadow: 0 0 15px rgba(255, 51, 255, 0.6) !important;
 }
 
-/* 4. Tarjetas y Contenedores de Tablas con Transparencia */
+/* 4. Tarjetas y Contenedores con Matiz Rosado Translúcido */
 body.theme-femenina .card,
 body.theme-femenina .tabla-contenedor,
 body.theme-femenina .match-bracket {
-    background: rgba(25, 0, 50, 0.5) !important;
-    border: 1px solid rgba(255, 0, 127, 0.2) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    background: rgba(25, 0, 15, 0.55) !important;
+    border: 1px solid rgba(255, 51, 255, 0.2) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
     backdrop-filter: blur(15px) !important;
 }
 
-/* 5. Cabeceras Metálicas Púrpuras y Filas */
+/* 5. Cabeceras Metálicas Magenta y Filas */
 body.theme-femenina th,
 body.theme-femenina .header-grid {
-    background: #1f0033 !important;
-    color: #ff007f !important;
-    border-bottom: 2px solid #ff007f !important;
+    background: #3a0020 !important;
+    color: #ff33ff !important;
+    border-bottom: 2px solid #ff33ff !important;
     font-weight: 900 !important;
 }
 
 body.theme-femenina tr:hover {
-    background: rgba(255, 0, 127, 0.04) !important;
+    background: rgba(255, 51, 255, 0.05) !important;
 }
 
 body.theme-femenina td,
 body.theme-femenina .grid-posiciones,
 body.theme-femenina .grid-goleadores,
 body.theme-femenina .match-item {
-    border-bottom: 1px solid rgba(255, 0, 127, 0.1) !important;
-    color: #e2d9f3 !important;
+    border-bottom: 1px solid rgba(255, 51, 255, 0.1) !important;
+    color: #fceeff !important; /* Blanco lila suave */
 }
 
-/* Forzar los números de puntos (PTS) y cajas de score a fucsia brillante */
+/* Forzar los números de puntos (PTS) y cajas de score a rosado brillante */
 body.theme-femenina td:last-child,
 body.theme-femenina .pts-highlight {
-    color: #ff007f !important;
+    color: #ff33ff !important;
     font-weight: bold !important;
-    text-shadow: 0 0 8px rgba(255, 0, 127, 0.4);
+    text-shadow: 0 0 8px rgba(255, 51, 255, 0.4);
 }
 
 body.theme-femenina .score-box,
 body.theme-femenina .score-bracket {
-    background: #ff007f !important;
+    background: #ff33ff !important;
     color: #ffffff !important;
     font-weight: 900 !important;
 }
 
 body.theme-femenina .date-divider {
-    background: #ff007f !important;
+    background: #ff33ff !important;
     color: #ffffff !important;
 }
 
 body.theme-femenina .date-divider + .card {
-    border-top: 2px solid #ff007f !important;
+    border-top: 2px solid #ff33ff !important;
 }
 
 /* 6. Barras de Desplazamiento en Verde Menta Cyberpunk */
@@ -632,7 +641,7 @@ body.theme-femenina .table-container::-webkit-scrollbar-thumb {
 
 /* 7. Módulo de Goleadora Destacada (Efecto Gradiente Menta) */
 body.theme-femenina .top-scorer-card {
-    background: linear-gradient(90deg, rgba(0, 255, 170, 0.2) 0%, rgba(25, 0, 50, 0.9) 100%) !important;
+    background: linear-gradient(90deg, rgba(0, 255, 170, 0.2) 0%, rgba(25, 0, 15, 0.9) 100%) !important;
     border: 2px solid #00ffaa !important;
     box-shadow: 0 0 15px rgba(0, 255, 170, 0.2) !important;
 }
@@ -644,35 +653,35 @@ body.theme-femenina .top-scorer-name {
 
 /* 8. Banner Especial de la Cartilla Mundial */
 body.theme-femenina .banner-cartilla {
-    background: linear-gradient(135deg, #1f0033 0%, #4d003b 100%) !important;
-    border: 1.5px solid #ff007f !important;
+    background: linear-gradient(135deg, #2a0015 0%, #4a002a 100%) !important;
+    border: 1.5px solid #ff33ff !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
 }
 
 body.theme-femenina .btn-banner,
 body.theme-femenina .btn-cartilla {
-    background: #ff007f !important;
+    background: #ff33ff !important; /* El botón rosado de tu segunda imagen */
     color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(255, 0, 127, 0.4) !important;
+    box-shadow: 0 4px 12px rgba(255, 51, 255, 0.4) !important;
     border: none !important;
 }
 
 body.theme-femenina .btn-banner:hover,
 body.theme-femenina .btn-cartilla:hover {
-    background: #ff3399 !important;
-    box-shadow: 0 6px 16px rgba(255, 0, 127, 0.6) !important;
+    background: #ff66ff !important;
+    box-shadow: 0 6px 16px rgba(255, 51, 255, 0.6) !important;
 }
 
 /* 9. Entradas de Control en Zona Administrativa */
 body.theme-femenina .admin-form input, 
 body.theme-femenina .admin-form select {
-    background: rgba(11, 0, 26, 0.7) !important;
-    border: 1px solid rgba(255, 0, 127, 0.3) !important;
+    background: rgba(15, 0, 10, 0.7) !important;
+    border: 1px solid rgba(255, 51, 255, 0.3) !important;
 }
 
 body.theme-femenina .admin-cartilla-gl, 
 body.theme-femenina .admin-cartilla-gv {
-    background: #0b001a !important;
-    color: #ff007f !important;
-    border: 1px solid rgba(255, 0, 127, 0.4) !important;
+    background: #0b0015 !important;
+    color: #ff33ff !important;
+    border: 1px solid rgba(255, 51, 255, 0.4) !important;
 }
