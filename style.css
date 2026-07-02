@@ -541,18 +541,15 @@ body.theme-femenina {
     color: #ffffff !important;
 }
 
-body.theme-femenina .background-overlay,
-body.theme-femenina::before {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* Cambiado de violeta a degradado radial con centro magenta/fucsia quemado */
+body.theme-femenina .background-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    /* Fuerza el degradado radial con centro magenta encendido hacia negro lila */
     background: radial-gradient(circle at top, #4a002a 0%, #0b0015 100%) !important;
-    z-index: -1;
-    content: "";
-    display: block;
+    z-index: -1 !important;
 }
 
 /* 2. Interruptor de Textos de Identidad (N Celeste y A Rosada) */
