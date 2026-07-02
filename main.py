@@ -105,7 +105,8 @@ async def login(request: Request):
         raise HTTPException(status_code=400, detail="Error en el formato de datos")
 
 @app.get("/torneo_data.json")
-async def obtener_datos():
+async def obtener_datos(rama: str = "masculina"):
+    # Por ahora procesa y sirve el archivo único actual para no interrumpir el flujo en vivo
     if os.path.exists(DATA_FILE):
         return FileResponse(DATA_FILE)
     raise HTTPException(status_code=404, detail="Archivo de datos no encontrado")

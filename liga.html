@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#NAMLEAGUE2026</title>
+    <link rel="stylesheet" href="style.css?v=1.4">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <header>
+        <h1 class="logo-title">#<span class="txt-blue">N</span><span class="txt-red">A</span>MLEAGUE2026</h1>
+    </header>
+
+    <!-- BANNER CON EL ESTILO ORIGINAL AJUSTADO -->
+    <div class="banner-cartilla">
+        <div class="banner-content">
+            <span class="badge-nuevo">NUEVO</span>
+            <h2>¡CARTILLA MUNDIAL!</h2>
+            <button class="btn-banner" onclick="openTab(event, 'cartilla')">Revisa tus puntajes</button>
+        </div>
+    </div>
+
+    <!-- MENÚ DE NAVEGACIÓN IDÉNTICO AL ORIGINAL CON LA NUEVA PESTAÑA -->
+    <nav class="tabs-nav">
+        <button class="tab-link active" onclick="openTab(event, 'posiciones')">📊 POSICIONES</button>
+        <button class="tab-link" onclick="openTab(event, 'proximos')">🗓️ PRÓXIMOS</button>
+        <button class="tab-link" onclick="openTab(event, 'resultados')">⚽ RESULTADOS</button>
+        <button class="tab-link" onclick="openTab(event, 'fase-final')">🏆 FASE FINAL</button>
+        <button class="tab-link" onclick="openTab(event, 'goleadores')">👟 GOLEADORES</button>
+        <button class="tab-link" onclick="openTab(event, 'cartilla')">📝 CARTILLA MUNDIAL</button>
+        <button class="tab-link" onclick="openTab(event, 'admin')">🔐 ADMIN</button>
+    </nav>
+
+    <!-- CONTENEDOR DE CONTENIDO ORIGINAL DE 1100PX -->
+    <div class="content-container">
+        <section id="posiciones" class="tab-content" style="display: block;"></section>
+        <section id="proximos" class="tab-content"></section>
+        <section id="resultados" class="tab-content"></section>
+        <section id="fase-final" class="tab-content"></section>
+        <section id="goleadores" class="tab-content"></section>
+
+        <!-- SECCIÓN PÚBLICA DE LA CARTILLA INTEGRADA AL ESTILO ORIGINAL -->
+        <section id="cartilla" class="tab-content">
+            
+            <!-- CONTENEDOR INTERMEDIO: PARTIDOS Y GRÁFICO DE FAVORITOS -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                
+                <!-- Columna Izquierda: Resultados Partidos del Mundial -->
+                <div class="card" style="margin-bottom: 0;">
+                    <h2>Resultados de los Partidos</h2>
+                    <p style="text-align: center; opacity: 0.7; font-size: 0.8rem; margin-bottom: 15px;"></p>
+                    <div id="mundial-partidos-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; padding-right: 5px;">
+                        <!-- Cargado dinámicamente por JS -->
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Gráfico de Favoritos (Campeón) -->
+                <div class="card" style="margin-bottom: 0;">
+                    <h2>¿Quién será Campeón?</h2>
+                    <p style="text-align: center; opacity: 0.7; font-size: 0.8rem; margin-bottom: 15px;">Favoritos para ser campeón</p>
+                    <div id="mundial-grafico-container" style="display: flex; flex-direction: column; gap: 12px; max-height: 280px; overflow-y: auto; padding-right: 5px;">
+                        <!-- Cargado dinámicamente por JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TABLA DE POSICIONES ORIGINAL -->
+            <div class="card">
+                <h2>📝 TABLA DE POSICIONES</h2>
+                <p style="text-align: center; opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px; font-weight: 700;">
+                    Resultado Exacto: 3 puntos | Acertar al Ganador o Empate: 1 punto. | En caso de empate se privilegia el mayor número de aciertos exactos.
+                </p>
+                <div class="table-container">
+                    <table class="posiciones-table">
+                        <thead>
+                            <tr class="header-grid">
+                                <th style="width: 60px; text-align: center;">POS</th>
+                                <th>PARTICIPANTE</th>
+                                <th>CURSO / ESTAMENTO</th>
+                                <th style="text-align: center;">RESULTADOS EXACTOS 🎯</th>
+                                <th style="text-align: center; color: #FFD700;">PTS</th>
+                                <th style="color: #FFD700; text-align: center;">CAMPEÓN DEL MUNDO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-cartilla-body">
+                            <!-- Datos generados dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE ADMINISTRACIÓN IDÉNTICA A LA ORIGINAL -->
+        <section id="admin" class="tab-content">
+            <div id="admin-login" class="card">
+                <h2>🔐 Acceso Administrador</h2>
+                <div class="admin-form" style="text-align: center; display: flex; justify-content: center; gap: 10px;">
+                    <input type="password" id="admin-password" placeholder="Clave de acceso">
+                    <button class="btn-add" onclick="verificarPassword()">Entrar</button>
+                </div>
+            </div>
+
+            <div id="admin-panel" style="display: none;">
+                
+                <div class="card" style="margin-bottom: 20px;">
+                    <h2>🛡️ Gestión de Equipos</h2>
+                    <div class="admin-form">
+                        <h3>Incorporar Nuevo Equipo</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                            <input type="text" id="new-team-name" placeholder="NOMBRE DEL EQUIPO">
+                            <select id="new-team-group">
+                                <option value="A">Grupo A</option>
+                                <option value="B">Grupo B</option>
+                                <option value="C">Grupo C</option>
+                                <option value="D">Grupo D</option>
+                            </select>
+                            <div class="file-input-wrapper">
+                                <label for="new-team-logo" class="btn-file">📁 Subir Logo</label>
+                                <input type="file" id="new-team-logo" accept="image/*" style="display:none;" onchange="updateFileName(this)">
+                                <span id="file-name-display" style="font-size: 0.7rem; opacity: 0.7;">Sin archivo</span>
+                            </div>
+                            <button class="btn-add" onclick="agregarEquipo()">➕ Crear Equipo</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <h3>Equipos Registrados (Editar Nombre/Grupo/Logo)</h3>
+                    <div id="admin-teams-list"></div>
+                </div>
+
+                <div class="card">
+                    <h2>📅 Gestión de Partidos</h2>
+                    <div class="admin-form">
+                        <h3>Agendar Nuevo Partido</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                            <input type="date" id="match-date">
+                            <select id="match-team-l"></select>
+                            <span class="txt-gold">VS</span>
+                            <select id="match-team-v"></select>
+                            <button class="btn-add" onclick="agendarPartido()">🗓️ Agendar</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <h3>Partidos Registrados (Editar Goles)</h3>
+                    <div id="admin-partidos-list"></div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h2>👟 Gestión de Goleadores</h2>
+                    <div class="admin-form">
+                        <h3>Añadir Nuevo Jugador</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                            <input type="text" id="new-player-name" placeholder="NOMBRE DEL JUGADOR">
+                            <select id="new-player-team"></select>
+                            <input type="number" id="new-player-goals" value="0" style="width: 70px;">
+                            <button class="btn-add" onclick="agregarJugador()">➕ Añadir</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <h3>Modificar Goles existentes</h3>
+                    <div id="admin-goleadores-list"></div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h2>🏆 Gestión de Fase Final</h2>
+                    <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 10px;">Edita los cruces y resultados de las eliminatorias.</p>
+                    <div id="admin-fase-final-list"></div>
+                </div>
+
+                <!-- CONTENEDOR PARA LOS RESULTADOS REALES DE LA CARTILLA -->
+                <div class="card" style="margin-top: 20px; margin-bottom: 20px;">
+                    <h2>🔮 Resultados Reales - Cartilla Mundial</h2>
+                    <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px;">Ingresa los marcadores oficiales de los 20 partidos del mundial. Deja vacíos los encuentros no disputados.</p>
+                    
+                    <div id="admin-cartilla-partidos" style="display: flex; flex-direction: column; gap: 12px; max-height: 450px; overflow-y: auto; padding-right: 10px; margin-bottom: 15px;"></div>
+                    
+                    <button class="btn-save" onclick="guardarResultadosRealesCartilla()">💾 GUARDAR RESULTADOS DE LA CARTILLA</button>
+                </div>
+
+                <button class="btn-save" style="background: #4a86e8; margin-top: 10px;" onclick="guardarCambiosServidor()">💾 GUARDAR TODO EN DISCO (JSON LIGA)</button>
+                <button class="btn-save" style="background: #444; margin-top: 10px;" onclick="cerrarSesion()">Cerrar Sesión</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function updateFileName(input) {
+            const display = document.getElementById('file-name-display');
+            display.innerText = input.files.length > 0 ? input.files[0].name : "Sin archivo";
+        }
+    </script>
+</body>
+</html>

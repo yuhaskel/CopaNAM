@@ -3,6 +3,14 @@
 // ==========================================
 let torneoData = null;
 
+// NUEVO: Detectar la rama desde la URL (?rama=femenina o ?rama=masculina)
+const urlParams = new URLSearchParams(window.location.search);
+const ramaActual = urlParams.get('rama') || 'masculina'; 
+
+// LISTA OFICIAL Y CORREGIDA DE LOS 20 PARTIDOS
+const PARTIDOS_MUNDIAL = [
+// ... (El resto de tu script.js se mantiene idéntico)
+
 // LISTA OFICIAL Y CORREGIDA DE LOS 20 PARTIDOS
 const PARTIDOS_MUNDIAL = [
     "México VS Sudáfrica", "Brasil VS Marruecos", "Países Bajos VS Japón", "Costa de Marfil VS Ecuador",
