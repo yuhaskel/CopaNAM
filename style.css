@@ -441,9 +441,23 @@ hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 
     border-radius: 10px;
 }
 
+/* --- CORRECCIÓN DE NAVEGACIÓN EN CELULARES --- */
 @media (max-width: 768px) {
-    body { padding: 15px 10px; }
-    h1 { font-size: 1.6rem; }
+    /* Forzamos a la barra de menú a estar siempre al frente y recibir clics */
+    .tabs-nav {
+        position: relative;
+        z-index: 9999 !important;
+        pointer-events: auto !important;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Aseguramos que los botones internos respondan al tacto */
+    .tab-link {
+        pointer-events: auto !important;
+        cursor: pointer;
+    }
+}
 
     .grid-posiciones {
         grid-template-columns: 110px repeat(6, 45px);
