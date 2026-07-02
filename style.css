@@ -15,14 +15,29 @@ body {
     overflow-x: hidden;
 }
 
+/* ==========================================
+   FONDOS ADAPTATIVOS PARA CADA RAMA 
+   ========================================== */
+
+/* Propiedades base obligatorias para el contenedor de fondo */
 .background-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at top, #00124d 0%, #000422 100%);
     z-index: -1;
+    transition: background 0.5s ease; /* Suaviza el cambio si se recarga */
+}
+
+/* 🔵 FONDO DE LA RAMA MASCULINA: Azul Eléctrico a Negro Profundo */
+body.theme-masculina .background-overlay {
+    background: radial-gradient(circle at top, #001854 0%, #000414 100%) !important;
+}
+
+/* 🟣 FONDO DE LA RAMA FEMENINA: Tu Rosado/Magenta de la captura Imagen_2 */
+body.theme-femenina .background-overlay {
+    background: radial-gradient(circle at top, #4a002a 0%, #0b0015 100%) !important;
 }
 
 /* --- 2. CABECERA Y NAVEGACIÓN --- */
