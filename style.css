@@ -31,9 +31,11 @@ header {
     text-align: center;
 }
 
-header a {
-    color: white;
-    text-decoration: none;
+header a, 
+header a:link, 
+header a:visited {
+    color: #ffffff !important;
+    text-decoration: none !important;
 }
 
 .logo-title {
