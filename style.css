@@ -35,9 +35,9 @@ body.theme-masculina .background-overlay {
     background: radial-gradient(circle at top, #001854 0%, #000414 100%) !important;
 }
 
-/* 🟣 FONDO DE LA RAMA FEMENINA: Tu Rosado/Magenta de la captura Imagen_2 */
+/* 🟣 FONDO DE LA RAMA FEMENINA: Púrpura Oscuro Azulado de la camiseta de Escocia */
 body.theme-femenina .background-overlay {
-    background: radial-gradient(circle at top, #4a002a 0%, #0b0015 100%) !important;
+    background: radial-gradient(circle at top, #241a45 0%, #110d26 100%) !important;
 }
 
 /* --- 2. CABECERA Y NAVEGACIÓN --- */
@@ -530,14 +530,14 @@ hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 
         min-width: 650px;
     }
 }
+
 /* ==========================================================================
-   TEMA DEFINITIVO PREMIUM - RAMA FEMENINA 💜💖💚
-   (Ajustado exactamente a la paleta de la captura: Fondo Magenta y Logos Neón)
+    TEMA DEFINITIVO PREMIUM - RAMA FEMENINA (Escocia Away Kit Style) 💜💖🌿
    ========================================================================== */
 
-/* 1. Fondo Rosado / Magenta Profundo Cyberpunk */
+/* 1. Fondos Adaptados al Púrpura de la Camiseta */
 body.theme-femenina {
-    background-color: #0b0015 !important;
+    background-color: #110d26 !important;
     color: #ffffff !important;
 }
 
@@ -547,152 +547,152 @@ body.theme-femenina .background-overlay {
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* Fuerza el degradado radial con centro magenta encendido hacia negro lila */
-    background: radial-gradient(circle at top, #4a002a 0%, #0b0015 100%) !important;
+    background: radial-gradient(circle at top, #241a45 0%, #110d26 100%) !important;
     z-index: -1 !important;
 }
 
+/* Clases de acento del título y textos */
 body.theme-femenina .txt-blue { 
-    color: #6efff8 !important; /* Celeste Neón */
-    text-shadow: 0 0 10px rgba(110, 255, 248, 0.5) !important;
+    color: #cbd2fc !important; /* Blanco lavanda claro / Lila base */
+    text-shadow: 0 0 10px rgba(203, 210, 252, 0.4) !important;
 }
 body.theme-femenina .txt-red { 
-    color: #ff33ff !important; /* Rosado Neón */
-    text-shadow: 0 0 10px rgba(255, 51, 255, 0.5) !important;
+    color: #ff2a85 !important; /* Rosa Neón de las tres tiras */
+    text-shadow: 0 0 10px rgba(255, 42, 133, 0.4) !important;
 }
 body.theme-femenina .txt-gold { 
-    color: #00ffaa !important; 
+    color: #9bc2bb !important; /* Verde menta pastel de los paneles */
     font-weight: bold !important; 
 }
 
-/* 3. Menú de Pestañas e Indicador Activo (Fucsia/Rosado Encendido) */
+/* 3. Menú de Pestañas e Indicador Activo (Rosa Neón Encendido) */
 body.theme-femenina .tabs-nav {
-    border-bottom: 1px solid rgba(255, 51, 255, 0.2) !important;
+    border-bottom: 1px solid rgba(203, 210, 252, 0.15) !important;
 }
 
 body.theme-femenina .tab-link {
-    background: rgba(35, 0, 20, 0.4) !important;
-    border: 1px solid rgba(255, 51, 255, 0.15) !important;
-    color: rgba(255, 255, 255, 0.6) !important;
+    background: rgba(36, 26, 69, 0.4) !important;
+    border: 1px solid rgba(203, 210, 252, 0.1) !important;
+    color: rgba(203, 210, 252, 0.6) !important;
 }
 
 body.theme-femenina .tab-link:hover {
-    background: rgba(255, 51, 255, 0.1) !important;
+    background: rgba(255, 42, 133, 0.1) !important;
     color: #ffffff !important;
-    border-color: rgba(255, 51, 255, 0.4) !important;
+    border-color: #ff2a85 !important;
 }
 
 body.theme-femenina .tab-link.active {
-    background: #ff33ff !important; /* Color rosado vibrante de la pestaña */
+    background: #ff2a85 !important; /* Rosa Neón activo */
     color: #ffffff !important;
-    border-bottom: 3px solid #ff33ff !important;
-    border-color: #ff33ff !important;
-    box-shadow: 0 0 15px rgba(255, 51, 255, 0.6) !important;
+    border-bottom: 3px solid #ff2a85 !important;
+    border-color: #ff2a85 !important;
+    box-shadow: 0 0 15px rgba(255, 42, 133, 0.6) !important;
 }
 
-/* 4. Tarjetas y Contenedores con Matiz Rosado Translúcido */
+/* 4. Tarjetas y Contenedores con Matiz Púrpura Translúcido */
 body.theme-femenina .card,
 body.theme-femenina .tabla-contenedor,
 body.theme-femenina .match-bracket {
-    background: rgba(25, 0, 15, 0.55) !important;
-    border: 1px solid rgba(255, 51, 255, 0.2) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+    background: rgba(36, 26, 69, 0.4) !important;
+    border: 1px solid rgba(203, 210, 252, 0.15) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
     backdrop-filter: blur(15px) !important;
 }
 
-/* 5. Cabeceras Metálicas Magenta y Filas */
+/* 5. Cabeceras e Interfaz de Tablas */
 body.theme-femenina th,
 body.theme-femenina .header-grid {
-    background: #3a0020 !important;
-    color: #ff33ff !important;
-    border-bottom: 2px solid #ff33ff !important;
+    background: #1d153a !important;
+    color: #cbd2fc !important; /* Encabezados en lila claro */
+    border-bottom: 2px solid #ff2a85 !important; /* Subrayado rosa neón */
     font-weight: 900 !important;
 }
 
 body.theme-femenina tr:hover {
-    background: rgba(255, 51, 255, 0.05) !important;
+    background: rgba(203, 210, 252, 0.04) !important;
 }
 
 body.theme-femenina td,
 body.theme-femenina .grid-posiciones,
 body.theme-femenina .grid-goleadores,
 body.theme-femenina .match-item {
-    border-bottom: 1px solid rgba(255, 51, 255, 0.1) !important;
-    color: #fceeff !important; /* Blanco lila suave */
+    border-bottom: 1px solid rgba(203, 210, 252, 0.08) !important;
+    color: #fceeff !important; /* Blanco lila suave para legibilidad */
 }
 
-/* Forzar los números de puntos (PTS) y cajas de score a rosado brillante */
+/* Forzar los números de puntos (PTS) y cajas de score */
 body.theme-femenina td:last-child,
 body.theme-femenina .pts-highlight {
-    color: #ff33ff !important;
+    color: #ff2a85 !important;
     font-weight: bold !important;
-    text-shadow: 0 0 8px rgba(255, 51, 255, 0.4);
+    text-shadow: 0 0 8px rgba(255, 42, 133, 0.3);
 }
 
 body.theme-femenina .score-box,
 body.theme-femenina .score-bracket {
-    background: #ff33ff !important;
+    background: #ff2a85 !important;
     color: #ffffff !important;
     font-weight: 900 !important;
 }
 
 body.theme-femenina .date-divider {
-    background: #ff33ff !important;
+    background: #ff2a85 !important;
     color: #ffffff !important;
 }
 
 body.theme-femenina .date-divider + .card {
-    border-top: 2px solid #ff33ff !important;
+    border-top: 2px solid #ff2a85 !important;
 }
 
-/* 6. Barras de Desplazamiento en Verde Menta Cyberpunk */
+/* 6. Barras de Desplazamiento en Fúcsia Sutil */
 body.theme-femenina .table-container::-webkit-scrollbar-thumb {
-    background: rgba(0, 255, 170, 0.4) !important;
+    background: rgba(255, 42, 133, 0.3) !important;
 }
 
-/* 7. Módulo de Goleadora Destacada (Efecto Gradiente Menta) */
+/* 7. Módulo de Goleadora Destacada (Gradiente Rosa a Púrpura) */
 body.theme-femenina .top-scorer-card {
-    background: linear-gradient(90deg, rgba(0, 255, 170, 0.2) 0%, rgba(25, 0, 15, 0.9) 100%) !important;
-    border: 2px solid #00ffaa !important;
-    box-shadow: 0 0 15px rgba(0, 255, 170, 0.2) !important;
+    background: linear-gradient(90deg, rgba(255, 42, 133, 0.2) 0%, rgba(17, 13, 38, 0.95) 100%) !important;
+    border: 2px solid #ff2a85 !important;
+    box-shadow: 0 0 15px rgba(255, 42, 133, 0.2) !important;
 }
 
 body.theme-femenina .top-scorer-name {
-    color: #00ffaa !important;
-    text-shadow: 0 0 8px rgba(0, 255, 170, 0.6) !important;
+    color: #cbd2fc !important;
+    text-shadow: 0 0 8px rgba(203, 210, 252, 0.4) !important;
 }
 
 /* 8. Banner Especial de la Cartilla Mundial */
 body.theme-femenina .banner-cartilla {
-    background: linear-gradient(135deg, #2a0015 0%, #4a002a 100%) !important;
-    border: 1.5px solid #ff33ff !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+    background: linear-gradient(135deg, #1d153a 0%, #2b335c 100%) !important;
+    border: 1.5px solid #ff2a85 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
 }
 
 body.theme-femenina .btn-banner,
 body.theme-femenina .btn-cartilla {
-    background: #ff33ff !important; /* El botón rosado de tu segunda imagen */
+    background: #ff2a85 !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(255, 51, 255, 0.4) !important;
+    box-shadow: 0 4px 12px rgba(255, 42, 133, 0.4) !important;
     border: none !important;
 }
 
 body.theme-femenina .btn-banner:hover,
 body.theme-femenina .btn-cartilla:hover {
-    background: #ff66ff !important;
-    box-shadow: 0 6px 16px rgba(255, 51, 255, 0.6) !important;
+    background: #ff559e !important;
+    box-shadow: 0 6px 16px rgba(255, 42, 133, 0.6) !important;
 }
 
 /* 9. Entradas de Control en Zona Administrativa */
 body.theme-femenina .admin-form input, 
 body.theme-femenina .admin-form select {
-    background: rgba(15, 0, 10, 0.7) !important;
-    border: 1px solid rgba(255, 51, 255, 0.3) !important;
+    background: rgba(17, 13, 38, 0.7) !important;
+    border: 1px solid rgba(203, 210, 252, 0.2) !important;
 }
 
 body.theme-femenina .admin-cartilla-gl, 
 body.theme-femenina .admin-cartilla-gv {
-    background: #0b0015 !important;
-    color: #ff33ff !important;
-    border: 1px solid rgba(255, 51, 255, 0.4) !important;
+    background: #110d26 !important;
+    color: #ff2a85 !important;
+    border: 1px solid rgba(255, 42, 133, 0.4) !important;
 }
