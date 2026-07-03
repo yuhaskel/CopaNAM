@@ -552,14 +552,13 @@ body.theme-femenina .background-overlay {
     z-index: -1 !important;
 }
 
-/* 2. Interruptor de Textos de Identidad (N Celeste y A Rosada) */
 body.theme-femenina .txt-blue { 
     color: #6efff8 !important; /* Celeste Neón */
-    text-shadow: 0 0 10px rgba(110, 255, 248, 0.5);
+    text-shadow: 0 0 10px rgba(110, 255, 248, 0.5) !important;
 }
 body.theme-femenina .txt-red { 
-    color: #ff33ff !important; /* Rosado / Fucsia Neón */
-    text-shadow: 0 0 10px rgba(255, 51, 255, 0.5);
+    color: #ff33ff !important; /* Rosado Neón */
+    text-shadow: 0 0 10px rgba(255, 51, 255, 0.5) !important;
 }
 body.theme-femenina .txt-gold { 
     color: #00ffaa !important; 
