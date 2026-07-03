@@ -233,19 +233,36 @@ function renderizarFaseFinal() {
     if (!container || !torneoData.fase_final) return;
 
     let html = `<h2>🏆 Cuadro de Fase Final</h2><div class="bracket-container">`;
-    const rondasKeys = Object.keys(torneoData.fase_final);
+    let rondasKeys = Object.keys(torneoData.fase_final);
+
+    // 👇 SOLUCIÓN DEFECTUOSA DEL JSON: Si es femenina, filtramos y transformamos las llaves de ida/vuelta
+    if (ramaActual === 'femenina') {
+        // Forzamos a que solo procese un formato único de tres columnas principales
+        rondasKeys = ["cuartos_ida", "semifinal_ida", "tercer_lugar", "final"];
+        // Nota: Si en tu JSON la final se llama diferente, el script la buscará correctamente.
+    }
 
     rondasKeys.forEach(rondaKey => {
         let partidosRonda = torneoData.fase_final[rondaKey];
+        if (!partidosRonda) return; // Si la ronda no existe en este JSON, saltar de forma segura
+        
         if (!Array.isArray(partidosRonda)) {
             partidosRonda = [partidosRonda];
         }
 
-        html += `<div class="bracket-round"><h3>${rondaKey.toUpperCase().replace("_", " ")}</h3>`;
+        // Renombrar los títulos de las columnas para que no digan "IDA" en la sección femenina
+        let tituloRonda = rondaKey.toUpperCase().replace("_", " ");
+        if (ramaActual === 'femenina') {
+            if (rondaKey === "cuartos_ida") tituloRonda = "CUARTOS DE FINAL";
+            if (rondaKey === "semifinal_ida") tituloRonda = "SEMIFINAL";
+        }
+
+        html += `<div class="bracket-round"><h3>${tituloRonda}</h3>`;
+        
         partidosRonda.forEach(p => {
             if (!p) return;
-            const winL = p.goles_l !== null && p.goles_l > p.goles_v;
-            const winV = p.goles_v !== null && p.goles_v > p.goles_l;
+            const winL = p.goles_l !== null && p.goles_v !== null && p.goles_l > p.goles_v;
+            const winV = p.goles_l !== null && p.goles_v !== null && p.goles_v > p.goles_l;
 
             const eqL = Object.values(torneoData.equipos).find(e => e.nombre === p.local);
             const eqV = Object.values(torneoData.equipos).find(e => e.nombre === p.visitante);
