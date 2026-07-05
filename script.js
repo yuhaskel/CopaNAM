@@ -583,45 +583,117 @@ function eliminarGoleador(i) {
 }
 
 function renderizarAdminFaseFinal() {
-    const container = document.getElementById("admin-fase-final-list");
-    if (!container || !torneoData.fase_final) return;
+    const contenedor = document.getElementById("admin-fase-final-partidos");
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
 
-    const nombresEquipos = Object.values(torneoData.equipos).map(e => e.nombre).sort();
-    const opcionesEquipos = `<option value="">TBD</option>` + nombresEquipos.map(n => `<option value="${n}">${n}</option>`).join("");
+    // Si el archivo viejo no tiene la llave 'fase_final' formateada, la inicializamos en vivo para evitar errores
+    if (!torneoData.fase_final || Array.isArray(torneoData.fase_final.cuartos_ida)) {
+        const partidoBase = { local: "TBD", visitante: "TBD", goles_l: null, goles_v: null };
+        torneoData.fase_final = {
+            "cuartos": (torneoData.fase_final && torneoData.fase_final.cuartos) || Array.from({length: 4}, () => ({...partidoBase})),
+            "semifinal": (torneoData.fase_final && torneoData.fase_final.semifinal) || Array.from({length: 2}, () => ({...partidoBase})),
+            "tercer_lugar": (torneoData.fase_final && torneoData.fase_final.tercer_lugar) || {...partidoBase},
+            "final": (torneoData.fase_final && torneoData.fase_final.final) || {...partidoBase}
+        };
+    }
 
-    let html = "";
+    const nombresRondas = {
+        "cuartos": "Cuartos de Final (Partido Único)",
+        "semifinal": "Semifinal (Partido Único)",
+        "tercer_lugar": "Tercer Lugar",
+        "final": "Gran Final"
+    };
+
     Object.keys(torneoData.fase_final).forEach(rondaKey => {
-        let partidos = torneoData.fase_final[rondaKey];
-        if (!Array.isArray(partidos)) partidos = [partidos]; 
-        html += `<h4 style="color:#FFD700; font-size:0.7rem; margin-top:10px;">${rondaKey.replace("_", " ")}</h4>`;
-        partidos.forEach((p, i) => {
-            const selL = opcionesEquipos.replace(`value="${p.local}"`, `value="${p.local}" selected`);
-            const selV = opcionesEquipos.replace(`value="${p.visitante}"`, `value="${p.visitante}" selected`);
-            html += `
-                <div class="admin-item" style="display:flex; gap:5px; align-items:center; margin-bottom:5px;">
-                    <select id="ff-l-${rondaKey}-${i}" style="flex:1;">${selL}</select>
-                    <input type="number" id="ff-gl-${rondaKey}-${i}" value="${p.goles_l ?? ''}" style="width:35px;">
-                    <input type="number" id="ff-gv-${rondaKey}-${i}" value="${p.goles_v ?? ''}" style="width:35px;">
-                    <select id="ff-v-${rondaKey}-${i}" style="flex:1;">${selV}</select>
-                    <button class="btn-add" onclick="guardarResultadoFaseFinal('${rondaKey}', ${i})">✔️</button>
-                </div>`;
-        });
+        // Ignorar cualquier residuo antiguo de ida y vuelta que venga del JSON anterior
+        if (rondaKey.includes('_ida') || rondaKey.includes('_vuelta') || rondaKey.includes('_unica')) return;
+
+        const rondaData = torneoData.fase_final[rondaKey];
+        const tituloRonda = nombresRondas[rondaKey] || rondaKey;
+
+        const rondaSection = document.createElement("div");
+        rondaSection.style.marginBottom = "20px";
+        rondaSection.style.borderBottom = "1px solid rgba(255,255,255,0.1)";
+        rondaSection.style.paddingBottom = "15px";
+        rondaSection.innerHTML = `<h3 style="color: var(--primary-color, #ff2a85); margin-bottom: 10px; font-size: 1rem;">${tituloRonda}</h3>`;
+
+        const equiposLista = Object.keys(torneoData.equipos || {});
+        const crearSelectEquipos = (selectedVal) => {
+            let options = `<option value="TBD">TBD</option>`;
+            equiposLista.forEach(eq => {
+                options += `<option value="${eq}" ${eq === selectedVal ? 'selected' : ''}>${eq}</option>`;
+            });
+            return options;
+        };
+
+        if (Array.isArray(rondaData)) {
+            rondaData.forEach((partido, idx) => {
+                const row = document.createElement("div");
+                row.style.display = "flex";
+                row.style.gap = "10px";
+                row.style.alignItems = "center";
+                row.style.marginBottom = "8px";
+
+                row.innerHTML = `
+                    <span style="font-size: 0.8rem; color: #aaa; min-width: 25px;">P${idx+1}:</span>
+                    <select onchange="actualizarEquipoFaseFinalUnificada('${rondaKey}', ${idx}, 'local', this.value)" style="flex: 1; padding: 4px; background: #111; color: #fff; border: 1px solid #444;">
+                        ${crearSelectEquipos(partido.local)}
+                    </select>
+                    <input type="number" placeholder="L" value="${partido.goles_l !== null ? partido.goles_l : ''}" onchange="actualizarGolesFaseFinalUnificada('${rondaKey}', ${idx}, 'goles_l', this.value)" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444;">
+                    <span style="color: #666;">vs</span>
+                    <input type="number" placeholder="V" value="${partido.goles_v !== null ? partido.goles_v : ''}" onchange="actualizarGolesFaseFinalUnificada('${rondaKey}', ${idx}, 'goles_v', this.value)" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444;">
+                    <select onchange="actualizarEquipoFaseFinalUnificada('${rondaKey}', ${idx}, 'visitante', this.value)" style="flex: 1; padding: 4px; background: #111; color: #fff; border: 1px solid #444;">
+                        ${crearSelectEquipos(partido.visitante)}
+                    </select>
+                `;
+                rondaSection.appendChild(row);
+            });
+        } else {
+            const row = document.createElement("div");
+            row.style.display = "flex";
+            row.style.gap = "10px";
+            row.style.alignItems = "center";
+
+            row.innerHTML = `
+                <select onchange="actualizarEquipoFaseFinalObjeto('${rondaKey}', 'local', this.value)" style="flex: 1; padding: 4px; background: #111; color: #fff; border: 1px solid #444;">
+                    ${crearSelectEquipos(rondaData.local)}
+                </select>
+                <input type="number" placeholder="L" value="${rondaData.goles_l !== null ? rondaData.goles_l : ''}" onchange="actualizarGolesFaseFinalObjeto('${rondaKey}', 'goles_l', this.value)" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444;">
+                <span style="color: #666;">vs</span>
+                <input type="number" placeholder="V" value="${rondaData.goles_v !== null ? rondaData.goles_v : ''}" onchange="actualizarGolesFaseFinalObjeto('${rondaKey}', 'goles_v', this.value)" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444;">
+                <select onchange="actualizarEquipoFaseFinalObjeto('${rondaKey}', 'visitante', this.value)" style="flex: 1; padding: 4px; background: #111; color: #fff; border: 1px solid #444;">
+                    ${crearSelectEquipos(rondaData.visitante)}
+                </select>
+            `;
+            rondaSection.appendChild(row);
+        }
+        contenedor.appendChild(rondaSection);
     });
-    container.innerHTML = html;
 }
 
-function guardarResultadoFaseFinal(ronda, index) {
-    const local = document.getElementById(`ff-l-${ronda}-${index}`).value;
-    const visitante = document.getElementById(`ff-v-${ronda}-${index}`).value;
-    const gl = document.getElementById(`ff-gl-${ronda}-${index}`).value;
-    const gv = document.getElementById(`ff-gv-${ronda}-${index}`).value;
+function actualizarEquipoFaseFinalUnificada(rondaKey, idx, campo, valor) {
+    if (torneoData?.fase_final?.[rondaKey]?.[idx]) {
+        torneoData.fase_final[rondaKey][idx][campo] = valor;
+    }
+}
 
-    let target = Array.isArray(torneoData.fase_final[ronda]) ? torneoData.fase_final[ronda][index] : torneoData.fase_final[ronda];
-    target.local = local || null;
-    target.visitante = visitante || null;
-    target.goles_l = gl === "" ? null : parseInt(gl);
-    target.goles_v = gv === "" ? null : parseInt(gv);
-    actualizarInterfaz();
+function actualizarGolesFaseFinalUnificada(rondaKey, idx, campo, valor) {
+    if (torneoData?.fase_final?.[rondaKey]?.[idx]) {
+        torneoData.fase_final[rondaKey][idx][campo] = valor === "" ? null : parseInt(valor);
+    }
+}
+
+function actualizarEquipoFaseFinalObjeto(rondaKey, campo, valor) {
+    if (torneoData?.fase_final?.[rondaKey]) {
+        torneoData.fase_final[rondaKey][campo] = valor;
+    }
+}
+
+function actualizarGolesFaseFinalObjeto(rondaKey, campo, valor) {
+    if (torneoData?.fase_final?.[rondaKey]) {
+        torneoData.fase_final[rondaKey][campo] = valor === "" ? null : parseInt(valor);
+    }
 }
 
 // ==========================================
@@ -718,16 +790,22 @@ function guardarResultadosRealesCartilla() {
 // ==========================================
 async function guardarCambiosServidor() {
     try {
-        //  Corregido: Se eliminó /api para apuntar directamente al endpoint real del backend
+        console.log("Guardando datos en servidor para la rama:", ramaActual);
         const response = await fetch(`/guardar?rama=${ramaActual}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(torneoData)
         });
-        if (response.ok) alert("✅ ¡Cambios guardados con éxito en el servidor!");
-        else alert("❌ Error al guardar.");
+        
+        if (response.ok) {
+            alert("✅ ¡Cambios guardados con éxito en el servidor!");
+            cargarTorneo();
+        } else {
+            const errorTxt = await response.text();
+            alert("❌ Servidor rechazó la operación: " + errorTxt);
+        }
     } catch (error) {
-        alert("❌ Error de conexión al guardar: " + error);
+        alert("❌ Error de red al intentar guardar: " + error.message);
     }
 }
 // ==========================================================================
