@@ -121,6 +121,18 @@ function renderizarPosiciones() {
     });
 
     torneoData.partidos.forEach(p => {
+        // 🚀 FILTRO DE FECHAS DE CORTE POR RAMA (OPCIÓN A)
+        // Corta el conteo de grupos para los hombres el 3 de junio de 2026
+        if (ramaActual === "masculina" && p.fecha > "2026-06-03") {
+            return;
+        }
+
+        // Corta el conteo de grupos para las mujeres en la fecha final de su fase regular
+        // Modifica "2026-06-25" por el día exacto de la última fecha de grupos femenina
+        if (ramaActual === "femenina" && p.fecha > "2026-06-25") {
+            return;
+        }
+
         if (p.goles_l !== null && p.goles_v !== null && stats[p.local] && stats[p.visitante]) {
             const sL = stats[p.local], sV = stats[p.visitante];
             const gl = parseInt(p.goles_l), gv = parseInt(p.goles_v);
@@ -154,7 +166,6 @@ function renderizarPosiciones() {
     });
     container.innerHTML = html;
 }
-
 function renderizarResultadosYProximos() {
     const resContainer = document.getElementById("resultados");
     const proxContainer = document.getElementById("proximos");
