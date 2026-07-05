@@ -32,25 +32,23 @@ RESULTADOS_CARTILLA_FILE = os.path.join(PERSISTENT_DIR, "cartilla_resultados.jso
 # Función auxiliar para garantizar estructura base en archivos nuevos o vacíos
 def garantizar_estructura_base(ruta_archivo):
     if not os.path.exists(ruta_archivo) or os.path.getsize(ruta_archivo) == 0:
-        # Estructura con los partidos base inicializados como TBD para que el JS los dibuje
         partido_base = {"local": "TBD", "visitante": "TBD", "goles_l": None, "goles_v": None}
         
+        # 🚀 UNIFICADO: Estructura limpia de partidos únicos para cualquier archivo nuevo
         plantilla_vacia = {
             "equipos": {},
             "partidos": [],
             "goleadores": [],
             "fase_final": {
-                "cuartos_ida": [partido_base.copy() for _ in range(4)],
-                "cuartos_vuelta": [partido_base.copy() for _ in range(4)],
-                "semifinal_ida": [partido_base.copy() for _ in range(2)],
-                "semifinal_vuelta": [partido_base.copy() for _ in range(2)],
-                "tercer_lugar": {"local": "TBD", "visitante": "TBD", "goles_l": None, "goles_v": None},
-                "final": {"local": "TBD", "visitante": "TBD", "goles_l": None, "goles_v": None}
+                "cuartos": [partido_base.copy() for _ in range(4)],
+                "semifinal": [partido_base.copy() for _ in range(2)],
+                "tercer_lugar": partido_base.copy(),
+                "final": partido_base.copy()
             }
         }
         with open(ruta_archivo, "w", encoding="utf-8") as f:
             json.dump(plantilla_vacia, f, indent=4, ensure_ascii=False)
-
+            
 # Garantizar carpetas bases obligatorias
 for carpeta in [LOGOS_DIR, PRONOSTICOS_DIR]:
     if not os.path.exists(carpeta):
@@ -120,9 +118,9 @@ async def obtener_datos(rama: str = "masculina"):
 
 @app.post("/guardar")
 async def guardar_datos(request: Request):
-    """Escribe las configuraciones en el casillero correspondiente sin pisar la otra rama"""
+    """Guarda las configuraciones en el archivo correcto leyendo la rama de la URL"""
     try:
-        # Extrae el parámetro ?rama= de la URL de forma segura
+        # Extrae de forma segura el parámetro rama (?rama=masculina o ?rama=femenina)
         rama = request.query_params.get("rama", "masculina")
         data = await request.json()
         
