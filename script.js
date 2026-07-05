@@ -598,14 +598,16 @@ function renderizarAdminFaseFinal() {
     if (!contenedor) return;
     contenedor.innerHTML = "";
 
-    // Si el archivo viejo no tiene la llave 'fase_final' formateada, la inicializamos en vivo para evitar errores
-    if (!torneoData.fase_final || Array.isArray(torneoData.fase_final.cuartos_ida)) {
+    if (!torneoData) return;
+
+    // 🚀 BLINDAJE TOTAL: Si detecta llaves antiguas de ida/vuelta, limpia el objeto y fuerza partidos únicos
+    if (!torneoData.fase_final || torneoData.fase_final.cuartos_ida || torneoData.fase_final.cuartos_unica) {
         const partidoBase = { local: "TBD", visitante: "TBD", goles_l: null, goles_v: null };
         torneoData.fase_final = {
-            "cuartos": (torneoData.fase_final && torneoData.fase_final.cuartos) || Array.from({length: 4}, () => ({...partidoBase})),
-            "semifinal": (torneoData.fase_final && torneoData.fase_final.semifinal) || Array.from({length: 2}, () => ({...partidoBase})),
-            "tercer_lugar": (torneoData.fase_final && torneoData.fase_final.tercer_lugar) || {...partidoBase},
-            "final": (torneoData.fase_final && torneoData.fase_final.final) || {...partidoBase}
+            "cuartos": Array.from({length: 4}, () => ({...partidoBase})),
+            "semifinal": Array.from({length: 2}, () => ({...partidoBase})),
+            "tercer_lugar": {...partidoBase},
+            "final": {...partidoBase}
         };
     }
 
@@ -616,8 +618,9 @@ function renderizarAdminFaseFinal() {
         "final": "Gran Final"
     };
 
+    // Recorremos únicamente las llaves oficiales unificadas
     Object.keys(torneoData.fase_final).forEach(rondaKey => {
-        // Ignorar cualquier residuo antiguo de ida y vuelta que venga del JSON anterior
+        // Doble filtro de seguridad contra residuos viejos
         if (rondaKey.includes('_ida') || rondaKey.includes('_vuelta') || rondaKey.includes('_unica')) return;
 
         const rondaData = torneoData.fase_final[rondaKey];
@@ -639,41 +642,45 @@ function renderizarAdminFaseFinal() {
         };
 
         if (Array.isArray(rondaData)) {
+            // Cuartos y Semifinal
             rondaData.forEach((partido, idx) => {
                 const row = document.createElement("div");
                 row.style.display = "flex";
                 row.style.gap = "10px";
                 row.style.alignItems = "center";
                 row.style.marginBottom = "8px";
+                row.style.width = "100%";
 
                 row.innerHTML = `
                     <span style="font-size: 0.8rem; color: #aaa; min-width: 25px;">P${idx+1}:</span>
-                    <select onchange="actualizarEquipoFaseFinalUnificada('${rondaKey}', ${idx}, 'local', this.value)" style="flex: 1; padding: 4px; background: #111; color: #fff; border: 1px solid #444;">
+                    <select onchange="actualizarEquipoFaseFinalUnificada('${rondaKey}', ${idx}, 'local', this.value)" style="flex: 2; padding: 6px; background: #111; color: #fff; border: 1px solid #444; border-radius:4px; min-width:120px;">
                         ${crearSelectEquipos(partido.local)}
                     </select>
-                    <input type="number" placeholder="L" value="${partido.goles_l !== null ? partido.goles_l : ''}" onchange="actualizarGolesFaseFinalUnificada('${rondaKey}', ${idx}, 'goles_l', this.value)" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444;">
-                    <span style="color: #666;">vs</span>
-                    <input type="number" placeholder="V" value="${partido.goles_v !== null ? partido.goles_v : ''}" onchange="actualizarGolesFaseFinalUnificada('${rondaKey}', ${idx}, 'goles_v', this.value)" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444;">
-                    <select onchange="actualizarEquipoFaseFinalUnificada('${rondaKey}', ${idx}, 'visitante', this.value)" style="flex: 1; padding: 4px; background: #111; color: #fff; border: 1px solid #444;">
+                    <input type="number" placeholder="L" value="${partido.goles_l !== null ? partido.goles_l : ''}" onchange="actualizarGolesFaseFinalUnificada('${rondaKey}', ${idx}, 'goles_l', this.value)" style="width: 50px; text-align: center; padding: 6px; background: #222; color: #fff; border: 1px solid #444; border-radius:4px;">
+                    <span style="color: #666; font-size:0.8rem;">vs</span>
+                    <input type="number" placeholder="V" value="${partido.goles_v !== null ? partido.goles_v : ''}" onchange="actualizarGolesFaseFinalUnificada('${rondaKey}', ${idx}, 'goles_v', this.value)" style="width: 50px; text-align: center; padding: 6px; background: #222; color: #fff; border: 1px solid #444; border-radius:4px;">
+                    <select onchange="actualizarEquipoFaseFinalUnificada('${rondaKey}', ${idx}, 'visitante', this.value)" style="flex: 2; padding: 6px; background: #111; color: #fff; border: 1px solid #444; border-radius:4px; min-width:120px;">
                         ${crearSelectEquipos(partido.visitante)}
                     </select>
                 `;
                 rondaSection.appendChild(row);
             });
         } else {
+            // Tercer Lugar y Final (Objetos directos)
             const row = document.createElement("div");
             row.style.display = "flex";
             row.style.gap = "10px";
             row.style.alignItems = "center";
+            row.style.width = "100%";
 
             row.innerHTML = `
-                <select onchange="actualizarEquipoFaseFinalObjeto('${rondaKey}', 'local', this.value)" style="flex: 1; padding: 4px; background: #111; color: #fff; border: 1px solid #444;">
+                <select onchange="actualizarEquipoFaseFinalObjeto('${rondaKey}', 'local', this.value)" style="flex: 2; padding: 6px; background: #111; color: #fff; border: 1px solid #444; border-radius:4px; min-width:120px;">
                     ${crearSelectEquipos(rondaData.local)}
                 </select>
-                <input type="number" placeholder="L" value="${rondaData.goles_l !== null ? rondaData.goles_l : ''}" onchange="actualizarGolesFaseFinalObjeto('${rondaKey}', 'goles_l', this.value)" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444;">
-                <span style="color: #666;">vs</span>
-                <input type="number" placeholder="V" value="${rondaData.goles_v !== null ? rondaData.goles_v : ''}" onchange="actualizarGolesFaseFinalObjeto('${rondaKey}', 'goles_v', this.value)" style="width: 45px; text-align: center; padding: 4px; background: #222; color: #fff; border: 1px solid #444;">
-                <select onchange="actualizarEquipoFaseFinalObjeto('${rondaKey}', 'visitante', this.value)" style="flex: 1; padding: 4px; background: #111; color: #fff; border: 1px solid #444;">
+                <input type="number" placeholder="L" value="${rondaData.goles_l !== null ? rondaData.goles_l : ''}" onchange="actualizarGolesFaseFinalObjeto('${rondaKey}', 'goles_l', this.value)" style="width: 50px; text-align: center; padding: 6px; background: #222; color: #fff; border: 1px solid #444; border-radius:4px;">
+                <span style="color: #666; font-size:0.8rem;">vs</span>
+                <input type="number" placeholder="V" value="${rondaData.goles_v !== null ? rondaData.goles_v : ''}" onchange="actualizarGolesFaseFinalObjeto('${rondaKey}', 'goles_v', this.value)" style="width: 50px; text-align: center; padding: 6px; background: #222; color: #fff; border: 1px solid #444; border-radius:4px;">
+                <select onchange="actualizarEquipoFaseFinalObjeto('${rondaKey}', 'visitante', this.value)" style="flex: 2; padding: 6px; background: #111; color: #fff; border: 1px solid #444; border-radius:4px; min-width:120px;">
                     ${crearSelectEquipos(rondaData.visitante)}
                 </select>
             `;
