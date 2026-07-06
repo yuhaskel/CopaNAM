@@ -690,29 +690,29 @@ function renderizarAdminFaseFinal() {
     });
 }
 function actualizarEquipoFaseFinalUnificada(rondaKey, idx, campo, valor) {
-    if (torneoData?.fase_final?.[rondaKey]?.[idx]) {
+    if (torneoData && torneoData.fase_final && torneoData.fase_final[rondaKey] && torneoData.fase_final[rondaKey][idx]) {
         torneoData.fase_final[rondaKey][idx][campo] = valor;
     }
 }
 
 function actualizarGolesFaseFinalUnificada(rondaKey, idx, campo, valor) {
-    if (torneoData?.fase_final?.[rondaKey]?.[idx]) {
+    if (torneoData && torneoData.fase_final && torneoData.fase_final[rondaKey] && torneoData.fase_final[rondaKey][idx]) {
         torneoData.fase_final[rondaKey][idx][campo] = valor === "" ? null : parseInt(valor);
     }
 }
 
+// Para Tercer Lugar y Final (que son Objetos directos sin índices)
 function actualizarEquipoFaseFinalObjeto(rondaKey, campo, valor) {
-    if (torneoData?.fase_final?.[rondaKey]) {
+    if (torneoData && torneoData.fase_final && torneoData.fase_final[rondaKey]) {
         torneoData.fase_final[rondaKey][campo] = valor;
     }
 }
 
 function actualizarGolesFaseFinalObjeto(rondaKey, campo, valor) {
-    if (torneoData?.fase_final?.[rondaKey]) {
+    if (torneoData && torneoData.fase_final && torneoData.fase_final[rondaKey]) {
         torneoData.fase_final[rondaKey][campo] = valor === "" ? null : parseInt(valor);
     }
 }
-
 // ==========================================
 // 4B. LÓGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA
 // ==========================================
