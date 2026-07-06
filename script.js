@@ -636,7 +636,8 @@ function renderizarAdminFaseFinal() {
         const crearSelectEquipos = (selectedVal) => {
             let options = `<option value="TBD">TBD</option>`;
             equiposLista.forEach(eq => {
-                options += `<option value="${eq}" ${eq === selectedVal ? 'selected' : ''}>${eq}</option>`;
+                const nombreMostrar = torneoData.equipos[eq]?.nombre || eq;
+                options += `<option value="${nombreMostrar}" ${nombreMostrar === selectedVal ? 'selected' : ''}>${nombreMostrar}</option>`;
             });
             return options;
         };
