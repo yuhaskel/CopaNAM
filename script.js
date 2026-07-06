@@ -689,6 +689,11 @@ function renderizarAdminFaseFinal() {
         contenedor.appendChild(rondaSection);
     });
 }
+// ==========================================================================
+// FUNCIONES CAPTURADORAS PARA FASE FINAL (PARTIDOS ÚNICOS)
+// ==========================================================================
+
+// Para Cuartos y Semifinales (que son Arreglos/Listas de partidos)
 function actualizarEquipoFaseFinalUnificada(rondaKey, idx, campo, valor) {
     if (torneoData && torneoData.fase_final && torneoData.fase_final[rondaKey] && torneoData.fase_final[rondaKey][idx]) {
         torneoData.fase_final[rondaKey][idx][campo] = valor;
