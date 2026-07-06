@@ -600,8 +600,8 @@ function renderizarAdminFaseFinal() {
 
     if (!torneoData) return;
 
-    // 🚀 BLINDAJE TOTAL: Si detecta llaves antiguas de ida/vuelta, limpia el objeto y fuerza partidos únicos
-    if (!torneoData.fase_final || torneoData.fase_final.cuartos_ida || torneoData.fase_final.cuartos_unica) {
+    // 🚀 REPARADO: Si no existe la estructura de partidos únicos oficial ("cuartos"), la forzamos limpiamente
+    if (!torneoData.fase_final || !torneoData.fase_final.cuartos) {
         const partidoBase = { local: "TBD", visitante: "TBD", goles_l: null, goles_v: null };
         torneoData.fase_final = {
             "cuartos": Array.from({length: 4}, () => ({...partidoBase})),
@@ -618,9 +618,9 @@ function renderizarAdminFaseFinal() {
         "final": "Gran Final"
     };
 
-    // Recorremos únicamente las llaves oficiales unificadas
+    // Recorremos las llaves oficiales garantizadas
     Object.keys(torneoData.fase_final).forEach(rondaKey => {
-        // Doble filtro de seguridad contra residuos viejos
+        // Ignorar cualquier residuo antiguo que ande dando vueltas en el JSON
         if (rondaKey.includes('_ida') || rondaKey.includes('_vuelta') || rondaKey.includes('_unica')) return;
 
         const rondaData = torneoData.fase_final[rondaKey];
@@ -666,7 +666,7 @@ function renderizarAdminFaseFinal() {
                 rondaSection.appendChild(row);
             });
         } else {
-            // Tercer Lugar y Final (Objetos directos)
+            // Tercer Lugar y Final
             const row = document.createElement("div");
             row.style.display = "flex";
             row.style.gap = "10px";
@@ -689,7 +689,6 @@ function renderizarAdminFaseFinal() {
         contenedor.appendChild(rondaSection);
     });
 }
-
 function actualizarEquipoFaseFinalUnificada(rondaKey, idx, campo, valor) {
     if (torneoData?.fase_final?.[rondaKey]?.[idx]) {
         torneoData.fase_final[rondaKey][idx][campo] = valor;
