@@ -21,7 +21,7 @@ app.add_middleware(
 IS_RENDER = os.environ.get("RENDER", False)
 PERSISTENT_DIR = "/data" if IS_RENDER else "."
 
-# 1. Rutas de Archivos por Rama
+# 1. Rutas de Archivos por Rama (Tal como solicitaste)
 DATA_FILE_MASCULINA = os.path.join(PERSISTENT_DIR, "torneo_data.json") 
 DATA_FILE_FEMENINA = os.path.join(PERSISTENT_DIR, "torneo_data_femenina.json") 
 
@@ -29,12 +29,12 @@ LOGOS_DIR = os.path.join(PERSISTENT_DIR, "logos")
 PRONOSTICOS_DIR = os.path.join(PERSISTENT_DIR, "pronosticos") 
 RESULTADOS_CARTILLA_FILE = os.path.join(PERSISTENT_DIR, "cartilla_resultados.json")
 
-# Función auxiliar para garantizar estructura base en archivos nuevos o vacíos
+# Función auxiliar robusta (basada en tu main original que sí funcionaba)
 def garantizar_estructura_base(ruta_archivo):
     if not os.path.exists(ruta_archivo) or os.path.getsize(ruta_archivo) == 0:
         partido_base = {"local": "TBD", "visitante": "TBD", "goles_l": None, "goles_v": None}
         
-        # 🚀 UNIFICADO: Estructura limpia de partidos únicos para cualquier archivo nuevo
+        # Estructura limpia y unificada de partidos únicos para evitar fallos de lectura
         plantilla_vacia = {
             "equipos": {},
             "partidos": [],
@@ -48,13 +48,13 @@ def garantizar_estructura_base(ruta_archivo):
         }
         with open(ruta_archivo, "w", encoding="utf-8") as f:
             json.dump(plantilla_vacia, f, indent=4, ensure_ascii=False)
-            
-# Garantizar carpetas bases obligatorias
+
+# Garantizar que existan las carpetas bases obligatorias en el volumen persistente
 for carpeta in [LOGOS_DIR, PRONOSTICOS_DIR]:
     if not os.path.exists(carpeta):
         os.makedirs(carpeta, exist_ok=True)
 
-# LISTA REAL DE LOS 20 PARTIDOS DEL MUNDIAL
+# LISTA REAL DE LOS 20 PARTIDOS DEL MUNDIAL PARA LA CARTILLA
 PARTIDOS_MUNDIAL_LIST = [
     "México VS Sudáfrica", "Brasil VS Marruecos", "Países Bajos VS Japón", "Costa de Marfil VS Ecuador",
     "Francia VS Senegal", "Argelia VS Argentina", "Inglaterra VS Croacia", "México VS Corea del Sur",
@@ -63,7 +63,7 @@ PARTIDOS_MUNDIAL_LIST = [
     "Paraguay VS Australia", "Noruega VS Francia", "Uruguay VS España", "Colombia VS Portugal"
 ]
 
-# --- LÓGICA DE CÁLCULO DE LA CARTILLA ---
+# --- LÓGICA DE CÁLCULO DE LA CARTILLA MUNDIAL ---
 def calcular_puntos_cartilla(predicciones, reales):
     puntos_totales = 0
     aciertos_exactos = 0
@@ -88,7 +88,35 @@ def calcular_puntos_cartilla(predicciones, reales):
             continue
     return puntos_totales, aciertos_exactos
 
-# --- ENDPOINTS CONTROL DE ACCESO Y LIGA ---
+# --- ENDPOINTS LIGA (REPARADOS CON LA LOGICA QUE SI FUNCIONABA) ---
+
+@app.get("/torneo_data.json")
+async def obtener_datos(request: Request):
+    """Devuelve el archivo correcto según la rama requerida sin trabas de FastAPI"""
+    rama = request.query_params.get("rama", "masculina")
+    
+    if rama == "femenina":
+        garantizar_estructura_base(DATA_FILE_FEMENINA)
+        return FileResponse(DATA_FILE_FEMENINA)
+    else:
+        garantizar_estructura_base(DATA_FILE_MASCULINA)
+        return FileResponse(DATA_FILE_MASCULINA)
+
+@app.post("/guardar")
+async def guardar_datos(request: Request):
+    """Escribe los datos de forma segura en la rama correspondiente"""
+    try:
+        rama = request.query_params.get("rama", "masculina")
+        data = await request.json()
+        
+        archivo_destino = DATA_FILE_FEMENINA if rama == "femenina" else DATA_FILE_MASCULINA
+        
+        with open(archivo_destino, "w", encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+            
+        return {"status": "success", "rama_guardada": rama}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/login")
 async def login(request: Request):
@@ -103,36 +131,9 @@ async def login(request: Request):
         else:
             raise HTTPException(status_code=401, detail="Clave incorrecta")
     except Exception as e:
-        raise HTTPException(status_code=400, detail="Error en el formato de datos")
+        raise HTTPException(status_code=400, detail=val)
 
-@app.get("/torneo_data.json")
-async def obtener_datos(rama: str = "masculina"):
-    """Devuelve el archivo correcto según la rama requerida"""
-    if rama == "femenina":
-        garantizar_estructura_base(DATA_FILE_FEMENINA)
-        return FileResponse(DATA_FILE_FEMENINA)
-    else:
-        if not os.path.exists(DATA_FILE_MASCULINA):
-            garantizar_estructura_base(DATA_FILE_MASCULINA)
-        return FileResponse(DATA_FILE_MASCULINA)
-
-@app.post("/guardar")
-async def guardar_datos(request: Request):
-    """Guarda las configuraciones en el archivo correcto leyendo la rama de la URL"""
-    try:
-        # Extrae de forma segura el parámetro rama (?rama=masculina o ?rama=femenina)
-        rama = request.query_params.get("rama", "masculina")
-        data = await request.json()
-        
-        archivo_destino = DATA_FILE_FEMENINA if rama == "femenina" else DATA_FILE_MASCULINA
-        
-        with open(archivo_destino, "w", encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-            
-        return {"status": "success", "rama_guardada": rama}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-# --- ENDPOINTS DE LOGOS (COMPARTIDOS Y ACCESIBLES) ---
+# --- ENDPOINTS DE LOGOS ---
 
 @app.post("/upload_logo")
 async def upload_logo(file: UploadFile = File(...)):
@@ -147,13 +148,12 @@ async def upload_logo(file: UploadFile = File(...)):
 
 @app.get("/logos/{filename}")
 async def get_logo(filename: str):
-    """Permite al navegador web leer y renderizar las imágenes guardadas en disco"""
     file_path = os.path.join(LOGOS_DIR, filename)
     if os.path.exists(file_path):
         return FileResponse(file_path)
     raise HTTPException(status_code=404, detail="Imagen no encontrada")
 
-# --- ENDPOINTS DE LA CARTILLA MUNDIAL (ALINEADOS AL FORMATO SCRIPT) ---
+# --- ENDPOINTS DE LA CARTILLA MUNDIAL ---
 
 @app.get("/api/cartilla-resultados")
 async def get_cartilla_resultados():
@@ -208,7 +208,9 @@ async def subir_mis_json_locales(files: list[UploadFile] = File(...)):
                 shutil.copyfileobj(file.file, buffer)
             subidos += 1
     return {"status": "success", "mensaje": f"Se guardaron {subidos} cartillas."}
-    
+
+# --- ENLACES ESTÁTICOS Y BIENVENIDA RAÍZ ---
+
 @app.get("/")
 async def home():
     """Entrega el index.html automáticamente al acceder al dominio principal"""
