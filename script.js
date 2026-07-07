@@ -231,28 +231,27 @@ function renderizarGoleadores() {
 
 function renderizarFaseFinal() {
     const container = document.getElementById("fase-final");
-    if (!container || !torneoData.fase_final) return;
+    if (!container || !torneoData || !torneoData.fase_final) return;
 
     let html = `<h2>🏆 Cuadro de Fase Final</h2><div class="bracket-container">`;
     
-    // 🚀 CORREGIDO: Ambos usan la misma estructura estandarizada de partidos únicos
-    let rondasKeys = ["cuartos", "semifinal", "tercer_lugar", "final"];
+    // Obtenemos las llaves reales del JSON (cuartos, semifinal, final, etc.)
+    const rondasKeys = Object.keys(torneoData.fase_final);
 
     rondasKeys.forEach(rondaKey => {
+        // 🚀 FILTRO: Si la llave es del tercer lugar, la saltamos para mostrar solo los 3 bloques principales
+        if (rondaKey.includes("tercer")) return;
+
         let partidosRonda = torneoData.fase_final[rondaKey];
-        if (!partidosRonda) return; 
-        
+        if (!partidosRonda) return;
+
         if (!Array.isArray(partidosRonda)) {
             partidosRonda = [partidosRonda];
         }
 
-        const nombresRondasPublicas = {
-            "cuartos": "CUARTOS DE FINAL",
-            "semifinal": "SEMIFINAL",
-            "tercer_lugar": "TERCER LUGAR",
-            "final": "GRAN FINAL"
-        };
-        let tituloRonda = nombresRondasPublicas[rondaKey] || rondaKey.toUpperCase();
+        // Mapeo simple de títulos limpios en mayúsculas
+        let tituloRonda = rondaKey.toUpperCase().replace("_", " ");
+        if (tituloRonda === "FINAL") tituloRonda = "GRAN FINAL";
 
         html += `<div class="bracket-round"><h3>${tituloRonda}</h3>`;
         
@@ -285,7 +284,6 @@ function renderizarFaseFinal() {
     html += `</div>`;
     container.innerHTML = html;
 }
-
 // ==========================================
 // 3B. VISTA PÚBLICA EXCLUSIVA: CARTILLA MUNDIAL
 // ==========================================

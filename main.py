@@ -124,7 +124,7 @@ async def login(request: Request):
     try:
         data = await request.json()
         password_enviada = data.get("password")
-        password_real = os.environ.get("ADMIN_PASSWORD", "NAM...2026")
+        password_real = os.environ.get("ADMIN_PASSWORD", "clave_local_123")
         
         if password_enviada == password_real:
             return {"status": "success", "auth": True}
