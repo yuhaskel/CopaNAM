@@ -21,7 +21,7 @@ app.add_middleware(
 IS_RENDER = os.environ.get("RENDER", False)
 PERSISTENT_DIR = "/data" if IS_RENDER else "."
 
-# 1. Rutas de Archivos por Rama (Tal como solicitaste)
+# 1. Rutas de Archivos por Rama
 DATA_FILE_MASCULINA = os.path.join(PERSISTENT_DIR, "torneo_data.json") 
 DATA_FILE_FEMENINA = os.path.join(PERSISTENT_DIR, "torneo_data_femenina.json") 
 
@@ -29,7 +29,7 @@ LOGOS_DIR = os.path.join(PERSISTENT_DIR, "logos")
 PRONOSTICOS_DIR = os.path.join(PERSISTENT_DIR, "pronosticos") 
 RESULTADOS_CARTILLA_FILE = os.path.join(PERSISTENT_DIR, "cartilla_resultados.json")
 
-# Función auxiliar robusta (basada en tu main original que sí funcionaba)
+# Función auxiliar robusta
 def garantizar_estructura_base(ruta_archivo):
     if not os.path.exists(ruta_archivo) or os.path.getsize(ruta_archivo) == 0:
         partido_base = {"local": "TBD", "visitante": "TBD", "goles_l": None, "goles_v": None}
@@ -88,7 +88,7 @@ def calcular_puntos_cartilla(predicciones, reales):
             continue
     return puntos_totales, aciertos_exactos
 
-# --- ENDPOINTS LIGA (REPARADOS CON LA LOGICA QUE SI FUNCIONABA) ---
+# --- ENDPOINTS LIGA ---
 
 @app.get("/torneo_data.json")
 async def obtener_datos(request: Request):
@@ -131,7 +131,7 @@ async def login(request: Request):
         else:
             raise HTTPException(status_code=401, detail="Clave incorrecta")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=val)
+        raise HTTPException(status_code=400, detail=str(e)) # 🚀 REPARADO AQUÍ
 
 # --- ENDPOINTS DE LOGOS ---
 
