@@ -3,7 +3,7 @@
 // ==========================================
 let torneoData = null;
 
-// 👇 NUEVO: Detectar la rama desde la URL (?rama=femenina o ?rama=masculina)
+// 👇 Detectar la rama desde la URL (?rama=femenina o ?rama=masculina)
 const urlParams = new URLSearchParams(window.location.search);
 const ramaActual = urlParams.get('rama') || 'masculina'; 
 
@@ -18,7 +18,6 @@ const PARTIDOS_MUNDIAL = [
 
 document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add(`theme-${ramaActual}`);
-    
     cargarTorneo();
 });
 
@@ -40,7 +39,6 @@ function formatearFechaEspanol(fechaStr) {
 
 async function cargarTorneo() {
     try {
-        // 👇 MODIFICADO: Ahora añade dinámicamente la rama (?rama=masculina o ?rama=femenina)
         const response = await fetch(`/torneo_data.json?rama=${ramaActual}`); 
         if (!response.ok) throw new Error("Error al obtener datos");
         torneoData = await response.json();
@@ -121,17 +119,8 @@ function renderizarPosiciones() {
     });
 
     torneoData.partidos.forEach(p => {
-        // 🚀 FILTRO DE FECHAS DE CORTE POR RAMA (OPCIÓN A)
-        // Corta el conteo de grupos para los hombres el 3 de junio de 2026
-        if (ramaActual === "masculina" && p.fecha > "2026-06-03") {
-            return;
-        }
-
-        // Corta el conteo de grupos para las mujeres en la fecha final de su fase regular
-        // Modifica "2026-06-25" por el día exacto de la última fecha de grupos femenina
-        if (ramaActual === "femenina" && p.fecha > "2026-06-25") {
-            return;
-        }
+        if (ramaActual === "masculina" && p.fecha > "2026-06-03") return;
+        if (ramaActual === "femenina" && p.fecha > "2026-06-25") return;
 
         if (p.goles_l !== null && p.goles_v !== null && stats[p.local] && stats[p.visitante]) {
             const sL = stats[p.local], sV = stats[p.visitante];
@@ -166,6 +155,7 @@ function renderizarPosiciones() {
     });
     container.innerHTML = html;
 }
+
 function renderizarResultadosYProximos() {
     const resContainer = document.getElementById("resultados");
     const proxContainer = document.getElementById("proximos");
@@ -244,29 +234,25 @@ function renderizarFaseFinal() {
     if (!container || !torneoData.fase_final) return;
 
     let html = `<h2>🏆 Cuadro de Fase Final</h2><div class="bracket-container">`;
-    let rondasKeys = Object.keys(torneoData.fase_final);
-
-    // 👇 SOLUCIÓN DEFECTUOSA DEL JSON: Si es femenina, filtramos y transformamos las llaves de ida/vuelta
-    if (ramaActual === 'femenina') {
-        // Forzamos a que solo procese un formato único de tres columnas principales
-        rondasKeys = ["cuartos_ida", "semifinal_ida", "tercer_lugar", "final"];
-        // Nota: Si en tu JSON la final se llama diferente, el script la buscará correctamente.
-    }
+    
+    // 🚀 CORREGIDO: Ambos usan la misma estructura estandarizada de partidos únicos
+    let rondasKeys = ["cuartos", "semifinal", "tercer_lugar", "final"];
 
     rondasKeys.forEach(rondaKey => {
         let partidosRonda = torneoData.fase_final[rondaKey];
-        if (!partidosRonda) return; // Si la ronda no existe en este JSON, saltar de forma segura
+        if (!partidosRonda) return; 
         
         if (!Array.isArray(partidosRonda)) {
             partidosRonda = [partidosRonda];
         }
 
-        // Renombrar los títulos de las columnas para que no digan "IDA" en la sección femenina
-        let tituloRonda = rondaKey.toUpperCase().replace("_", " ");
-        if (ramaActual === 'femenina') {
-            if (rondaKey === "cuartos_ida") tituloRonda = "CUARTOS DE FINAL";
-            if (rondaKey === "semifinal_ida") tituloRonda = "SEMIFINAL";
-        }
+        const nombresRondasPublicas = {
+            "cuartos": "CUARTOS DE FINAL",
+            "semifinal": "SEMIFINAL",
+            "tercer_lugar": "TERCER LUGAR",
+            "final": "GRAN FINAL"
+        };
+        let tituloRonda = nombresRondasPublicas[rondaKey] || rondaKey.toUpperCase();
 
         html += `<div class="bracket-round"><h3>${tituloRonda}</h3>`;
         
@@ -309,34 +295,17 @@ function cargarRankingCartilla() {
 
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.5; padding: 25px;">Calculando puntajes en vivo desde /pronosticos...</td></tr>`;
 
-    // Realizamos la llamada al backend que devuelve el JSON estructurado de marcadores reales
-fetch("/api/ranking-cartilla")
-    .then(res => res.json())
-    .then(data => {
-
-        tbody.innerHTML = "";
-
-        if (data.ranking) {
-
-            procesarYRenderizarContenidosMundial(
-                data.ranking,
-                data.reales
-            );
-
-            renderizarFilasTablaPuntajes(
-                data.ranking,
-                tbody
-            );
-
-        } else {
-
-            cargarRankingFallbackDinamico(
-                data,
-                tbody
-            );
-
-        }
-    })
+    fetch("/api/ranking-cartilla")
+        .then(res => res.json())
+        .then(data => {
+            tbody.innerHTML = "";
+            if (data.ranking) {
+                procesarYRenderizarContenidosMundial(data.ranking, data.reales);
+                renderizarFilasTablaPuntajes(data.ranking, tbody);
+            } else {
+                cargarRankingFallbackDinamico(data, tbody);
+            }
+        })
         .catch(err => {
             console.error(err);
             tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding: 25px;">Error al computar los datos de las cartillas.</td></tr>`;
@@ -344,10 +313,7 @@ fetch("/api/ranking-cartilla")
 }
 
 function cargarRankingFallbackDinamico(resultadosReales, tbody) {
-    // Renderizamos los partidos y el gráfico de forma segura
     cargarPartidosConEstructuraInterna(resultadosReales);
-    
-    // Al ser un entorno offline/estático simulamos de forma limpia un placeholder para el ranking
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.7; padding: 25px;">Visualización de Marcadores Activa. Tabla de Posiciones sincronizándose en segundo plano.</td></tr>`;
 }
 
@@ -387,9 +353,7 @@ function renderizarFilasTablaPuntajes(listaUsuarios, tbody) {
 // ==========================================
 async function verificarPassword() {
     const pass = document.getElementById("admin-password").value;
-    
     try {
-        // Envia el login de forma limpia al endpoint restablecido de Python
         const response = await fetch('/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -400,7 +364,6 @@ async function verificarPassword() {
             document.getElementById("admin-login").style.display = "none";
             document.getElementById("admin-panel").style.display = "block";
             sessionStorage.setItem("admin_session", "active");
-            
             cargarFormularioAdminCartilla();
         } else {
             alert("❌ Clave incorrecta. Acceso denegado.");
@@ -594,13 +557,13 @@ function eliminarGoleador(i) {
 }
 
 function renderizarAdminFaseFinal() {
-    const contenedor = document.getElementById("admin-fase-final-partidos");
+    // 🚀 REPARADO: Ahora apunta correctamente al ID físico de tu liga.html ("admin-fase-final-list")
+    const contenedor = document.getElementById("admin-fase-final-list");
     if (!contenedor) return;
     contenedor.innerHTML = "";
 
     if (!torneoData) return;
 
-    // 🚀 REPARADO: Si no existe la estructura de partidos únicos oficial ("cuartos"), la forzamos limpiamente
     if (!torneoData.fase_final || !torneoData.fase_final.cuartos) {
         const partidoBase = { local: "TBD", visitante: "TBD", goles_l: null, goles_v: null };
         torneoData.fase_final = {
@@ -618,9 +581,7 @@ function renderizarAdminFaseFinal() {
         "final": "Gran Final"
     };
 
-    // Recorremos las llaves oficiales garantizadas
     Object.keys(torneoData.fase_final).forEach(rondaKey => {
-        // Ignorar cualquier residuo antiguo que ande dando vueltas en el JSON
         if (rondaKey.includes('_ida') || rondaKey.includes('_vuelta') || rondaKey.includes('_unica')) return;
 
         const rondaData = torneoData.fase_final[rondaKey];
@@ -643,7 +604,6 @@ function renderizarAdminFaseFinal() {
         };
 
         if (Array.isArray(rondaData)) {
-            // Cuartos y Semifinal
             rondaData.forEach((partido, idx) => {
                 const row = document.createElement("div");
                 row.style.display = "flex";
@@ -667,7 +627,6 @@ function renderizarAdminFaseFinal() {
                 rondaSection.appendChild(row);
             });
         } else {
-            // Tercer Lugar y Final
             const row = document.createElement("div");
             row.style.display = "flex";
             row.style.gap = "10px";
@@ -690,11 +649,7 @@ function renderizarAdminFaseFinal() {
         contenedor.appendChild(rondaSection);
     });
 }
-// ==========================================================================
-// FUNCIONES CAPTURADORAS PARA FASE FINAL (PARTIDOS ÚNICOS)
-// ==========================================================================
 
-// Para Cuartos y Semifinales (que son Arreglos/Listas de partidos)
 function actualizarEquipoFaseFinalUnificada(rondaKey, idx, campo, valor) {
     if (torneoData && torneoData.fase_final && torneoData.fase_final[rondaKey] && torneoData.fase_final[rondaKey][idx]) {
         torneoData.fase_final[rondaKey][idx][campo] = valor;
@@ -707,7 +662,6 @@ function actualizarGolesFaseFinalUnificada(rondaKey, idx, campo, valor) {
     }
 }
 
-// Para Tercer Lugar y Final (que son Objetos directos sin índices)
 function actualizarEquipoFaseFinalObjeto(rondaKey, campo, valor) {
     if (torneoData && torneoData.fase_final && torneoData.fase_final[rondaKey]) {
         torneoData.fase_final[rondaKey][campo] = valor;
@@ -719,6 +673,7 @@ function actualizarGolesFaseFinalObjeto(rondaKey, campo, valor) {
         torneoData.fase_final[rondaKey][campo] = valor === "" ? null : parseInt(valor);
     }
 }
+
 // ==========================================
 // 4B. LÓGICA DE ENTRADA: FORMULARIO ADMIN CARTILLA
 // ==========================================
@@ -831,13 +786,11 @@ async function guardarCambiosServidor() {
         alert("❌ Error de red al intentar guardar: " + error.message);
     }
 }
+
 // ==========================================================================
 // 6. FUNCIONES AGREGADAS: GRÁFICO DE FAVORITOS Y PARTIDOS DEL MUNDIAL
 // ==========================================================================
-function procesarYRenderizarContenidosMundial(
-    usuariosCartilla,
-    resultadosReales
-) {
+function procesarYRenderizarContenidosMundial(usuariosCartilla, resultadosReales) {
     renderizarGraficoFavoritos(usuariosCartilla);
     cargarPartidosConEstructuraInterna(resultadosReales);
 }
