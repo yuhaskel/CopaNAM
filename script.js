@@ -206,7 +206,7 @@ function renderizarGoleadores() {
     const container = document.getElementById("goleadores");
     if (!container) return;
 
-    let html = `<h2>👟 Tabla de Goleadores</h2>
+    let html = `<h2>👟 Tabla de Goleadoras</h2>
                 <div class="table-container">
                 <div class="card" style="min-width: 480px;">
                 <div class="header-grid grid-goleadores"><span></span><span>EQUIPO</span><span>JUGADOR</span><span style="text-align:center;">GOLES</span></div>`;
