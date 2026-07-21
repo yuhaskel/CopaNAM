@@ -143,28 +143,30 @@ h2 { margin-bottom: 20px; font-weight: 900; text-align: center; }
     text-align: left;
 }
 
-.grid-goleadores {
-    display: grid;
-    grid-template-columns: 50px 150px 1fr 80px;
-    padding: 12px 20px;
+.grid-posiciones, 
+.header-grid.grid-posiciones {
+    display: grid !important;
+    grid-template-columns: 2fr repeat(8, 40px) !important; /* 2fr para el Equipo + 8 columnas de 40px */
     align-items: center;
-    gap: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 6px;
+    padding: 10px 15px;
 }
 
 .team-cell {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;            /* Espacio cómodo entre logo y texto */
+    white-space: nowrap !important;   /* 🚀 OBLIGA a que el nombre del equipo no se divida en 2 líneas */
+    overflow: hidden;                 
+    text-overflow: ellipsis;         
 }
 
+/* Tamaño previo estándar: ~20px a 24px */
 .mini-logo {
-    width: 50px !important; 
-    height: 50px !important; 
+    width: 50px !important;       /* Aumentado ~50% */
+    height: 50px !important;      /* Aumentado ~50% */
     object-fit: contain;
     vertical-align: middle;
-
 }
 
 /* --- 5. RESULTADOS Y PRÓXIMOS --- */
@@ -465,6 +467,10 @@ hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 
     border-radius: 10px;
 }
 
+.table-container .card {
+    min-width: 600px !important;      /* Amplía el ancho total de la tarjeta para aprovechar la pantalla */
+}
+
 /* --- CORRECCIÓN DE NAVEGACIÓN EN CELULARES --- */
 @media (max-width: 768px) {
     .tabs-nav {
@@ -715,4 +721,51 @@ body.theme-femenina .admin-cartilla-gv {
 .team-bracket .mini-logo {
     width: 28px !important;
     height: 28px !important;
+}
+
+/* ==========================================
+   ESTILOS CORREGIDOS: TABLA DE GOLEADORES
+   ========================================== */
+
+/* 1. Definir la distribución exacta de las 4 columnas */
+.grid-goleadores,
+.header-grid.grid-goleadores {
+    display: grid !important;
+    /* Columna 1: Logo (50px) | Columna 2: Equipo (1.2fr) | Columna 3: Jugador/a (1.2fr) | Columna 4: Goles (60px) */
+    grid-template-columns: 50px 1.2fr 1.2fr 60px !important; 
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+}
+
+/* 2. Formato del Encabezado (EQUIPO, JUGADOR, GOLES) */
+.header-grid.grid-goleadores {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #ffd700; /* Texto dorado */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+/* 3. Evitar que el nombre del equipo rompa la fila */
+.team-name-wrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+/* 4. Resaltar la tarjeta de la Goleadora Máxima (Puesto 1) */
+.top-scorer-card {
+    border: 1px solid #ffd700 !important;
+    background: rgba(255, 215, 0, 0.08) !important;
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+.top-scorer-name {
+    color: #ffd700 !important;
+    font-weight: bold;
 }
