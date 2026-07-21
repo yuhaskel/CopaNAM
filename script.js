@@ -140,22 +140,21 @@ function renderizarPosiciones() {
 
     grupos.forEach(g => {
         html += `<div class="table-container">
-                    <div class="card" style="margin-bottom:15px; min-width: 450px;">
+                    <div class="card" style="margin-bottom:15px; min-width: 550px;">
                         <div class="header-grid grid-posiciones">
-                            <span>GRUPO ${g}</span><span>PJ</span><span>G</span><span>E</span><span>P</span><span>DG</span><span>PTS</span>
+                            <span>GRUPO ${g}</span><span>PJ</span><span>G</span><span>E</span><span>P</span><span>GF</span><span>GC</span><span>DG</span><span>PTS</span>
                         </div>`;
-        const ranking = Object.values(stats).filter(s => s.grupo === g).sort((a,b) => b.PTS - a.PTS || b.DG - a.DG);
+        const ranking = Object.values(stats).filter(s => s.grupo === g).sort((a,b) => b.PTS - a.PTS || b.DG - a.DG || b.GF - a.GF);
         ranking.forEach(eq => {
             html += `<div class="grid-posiciones">
                         <div class="team-cell"><img src="${obtenerSrcLogo(eq.logo)}" class="mini-logo">${eq.nombre}</div>
-                        <span>${eq.PJ}</span><span>${eq.G}</span><span>${eq.E}</span><span>${eq.P}</span><span>${eq.DG}</span><span class="txt-gold">${eq.PTS}</span>
+                        <span>${eq.PJ}</span><span>${eq.G}</span><span>${eq.E}</span><span>${eq.P}</span><span>${eq.GF}</span><span>${eq.GC}</span><span>${eq.DG}</span><span class="txt-gold">${eq.PTS}</span>
                     </div>`;
         });
         html += `</div></div>`;
     });
     container.innerHTML = html;
 }
-
 function renderizarResultadosYProximos() {
     const resContainer = document.getElementById("resultados");
     const proxContainer = document.getElementById("proximos");
