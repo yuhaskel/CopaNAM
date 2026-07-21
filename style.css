@@ -160,9 +160,11 @@ h2 { margin-bottom: 20px; font-weight: 900; text-align: center; }
 }
 
 .mini-logo {
-    width: 24px;
-    height: 24px;
+    width: 50px !important; 
+    height: 50px !important; 
     object-fit: contain;
+    vertical-align: middle;
+
 }
 
 /* --- 5. RESULTADOS Y PRÓXIMOS --- */
@@ -695,4 +697,22 @@ body.theme-femenina .admin-cartilla-gv {
     background: #110d26 !important;
     color: #ff2a85 !important;
     border: 1px solid rgba(255, 42, 133, 0.4) !important;
+}
+/* Ajuste de alineación general */
+.team-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaciado cómodo entre el logo agrandado y el texto */
+}
+
+/* Logos en la tabla de goleadores */
+.grid-goleadores .mini-logo {
+    width: 34px !important;
+    height: 34px !important;
+}
+
+/* Logos en las tarjetas de la Fase Final */
+.team-bracket .mini-logo {
+    width: 28px !important;
+    height: 28px !important;
 }
