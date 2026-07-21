@@ -120,7 +120,7 @@ function renderizarPosiciones() {
 
     torneoData.partidos.forEach(p => {
         if (ramaActual === "masculina" && p.fecha > "2026-06-03") return;
-        if (ramaActual === "femenina" && p.fecha > "2026-06-25") return;
+        if (ramaActual === "femenina" && p.fecha > "2026-08-11") return;
 
         if (p.goles_l !== null && p.goles_v !== null && stats[p.local] && stats[p.visitante]) {
             const sL = stats[p.local], sV = stats[p.visitante];
