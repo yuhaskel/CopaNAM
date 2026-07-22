@@ -769,3 +769,62 @@ body.theme-femenina .admin-cartilla-gv {
     color: #ffd700 !important;
     font-weight: bold;
 }
+/* ==========================================================================
+   AJUSTES EXCLUSIVOS PARA PANTALLAS DE CELULAR (MÓVIL)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+    /* 1. Ajuste para Próximos y Resultados en Móvil */
+    .match-item {
+        padding: 8px 4px !important;
+        gap: 4px !important;
+    }
+
+    .match-item .team-cell {
+        font-size: 0.8rem !important;        /* Tipografía ligeramente más compacta */
+        line-height: 1.1 !important;
+        white-space: normal !important;      /* 🚀 Permite que el nombre use 2 líneas si es largo */
+        overflow: visible !important;
+        text-overflow: unset !important;
+    }
+
+    /* Reducimos el logo en móviles para que no asfixie al texto */
+    .match-item .mini-logo {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+    }
+
+    /* Caja de marcador/VS más compacta en cel */
+    .score-box {
+        min-width: 45px !important;
+        padding: 4px 6px !important;
+        font-size: 0.85rem !important;
+    }
+
+
+    /* 2. Ajuste para la Tabla de Posiciones en Móvil */
+    .table-container {
+        overflow-x: auto !important;         /* Permite scroll horizontal fluido si la tabla es muy ancha */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .grid-posiciones, 
+    .header-grid.grid-posiciones {
+        /* Damos un ancho mínimo a la tabla para que no se aplaste en pantallas pequeñas */
+        min-width: 520px !important; 
+        padding: 8px 10px !important;
+    }
+
+    .grid-posiciones .mini-logo {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+    }
+
+    .grid-posiciones .team-cell {
+        font-size: 0.82rem !important;
+        white-space: normal !important;      /* Permite el salto de línea en nombres largos */
+        line-height: 1.15 !important;
+    }
+}
